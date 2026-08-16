@@ -6,6 +6,7 @@
  * 用法：npm run deploy（或设置 GH_TOKEN 后 node scripts/deploy-gh.mjs）
  */
 import { execSync } from "node:child_process";
+import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -24,18 +25,38 @@ const headers = {
   "X-GitHub-Api-Version": "2022-11-28",
 };
 
-async function gh(method, url, body) {
-  for (let attempt = 0; attempt < 4; attempt++) {
-    const res = await fetch(url, {
-      method,
-      headers,
-      body: body === undefined ? undefined : JSON.stringify(body),
-    });
+function gitBlobSha(buf) {
+  return crypto.createHash("sha1").update(`blob ${buf.length}\0`).update(buf).digest("hex");
+}
+
+async function gh(method, url, body, timeoutMs = 120000) {
+  for (let attempt = 0; attempt < 6; attempt++) {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), timeoutMs);
+    let res;
+    try {
+      res = await fetch(url, {
+        method,
+        headers,
+        body: body === undefined ? undefined : JSON.stringify(body),
+        signal: ctrl.signal,
+      });
+    } catch (e) {
+      clearTimeout(timer);
+      if (attempt < 3) {
+        const wait = 2000 * 2 ** attempt;
+        console.log(`网络异常重试 ${method} ${url.split("/").pop()} (${e.message.slice(0, 40)})，${wait / 1000}s 后...`);
+        await new Promise((r) => setTimeout(r, wait));
+        continue;
+      }
+      throw e;
+    }
+    clearTimeout(timer);
     if (res.ok || res.status === 404 || res.status === 204) {
       return res.status === 204 ? null : res.status === 404 ? null : res.json();
     }
-    if (attempt < 3) {
-      const wait = 2000 * 2 ** attempt;
+    if (attempt < 5) {
+      const wait = Math.min(2000 * 2 ** attempt, 30000);
       console.log(`重试 ${method} ${url.split("/").pop()} (${res.status})，${wait / 1000}s 后...`);
       await new Promise((r) => setTimeout(r, wait));
       continue;
@@ -59,16 +80,43 @@ function collectFiles(dir, skip = []) {
   return out.sort((a, b) => a.path.localeCompare(b.path));
 }
 
-async function commitTree(files, message, parentSha) {
-  const blobs = [];
-  for (const f of files) {
-    const content = f.full ? fs.readFileSync(f.full).toString("base64") : "";
-    const blob = await gh("POST", `${api}/git/blobs`, {
-      content,
-      encoding: "base64",
-    });
-    blobs.push({ path: f.path, mode: "100644", type: "blob", sha: blob.sha });
+async function remoteBlobShas() {
+  const shas = new Set();
+  for (const branch of ["main", "source"]) {
+    try {
+      const tree = await gh("GET", `${api}/git/trees/${branch}?recursive=1`, undefined, 30000);
+      if (tree?.tree) for (const e of tree.tree) if (e.type === "blob") shas.add(e.sha);
+    } catch {
+      // 分支可能不存在，忽略
+    }
   }
+  return shas;
+}
+
+async function commitTree(files, message, parentSha) {
+  // 并行、断点续传式上传 blob：先算 git 指纹，已存在于远程树则跳过
+  const blobs = new Array(files.length);
+  const CONCURRENCY = 4;
+  let cursor = 0;
+  async function worker() {
+    while (cursor < files.length) {
+      const i = cursor++;
+      const f = files[i];
+      const content = f.full ? fs.readFileSync(f.full) : Buffer.alloc(0);
+      const sha = gitBlobSha(content);
+      if (remoteShas.has(sha)) {
+        blobs[i] = { path: f.path, mode: "100644", type: "blob", sha };
+        continue;
+      }
+      const blob = await gh("POST", `${api}/git/blobs`, {
+        content: content.toString("base64"),
+        encoding: "base64",
+      });
+      blobs[i] = { path: f.path, mode: "100644", type: "blob", sha: blob.sha };
+    }
+  }
+  await Promise.all(Array.from({ length: CONCURRENCY }, worker));
+  console.log(`  blobs: ${files.length} 个，已上传/复用`);
   const tree = await gh("POST", `${api}/git/trees`, { tree: blobs });
   const commit = await gh("POST", `${api}/git/commits`, {
     message,
@@ -93,6 +141,8 @@ async function updateRef(branch, sha) {
 const mainRef = await gh("GET", `${api}/git/ref/heads/main`);
 if (!mainRef) throw new Error("远程 main 分支不存在");
 const mainSha = mainRef.object.sha;
+const remoteShas = await remoteBlobShas();
+console.log(`远程已有对象：${remoteShas.size} 个`);
 
 // 1) 同步源码到 source 分支
 const sourceFiles = collectFiles(root, [
@@ -102,7 +152,7 @@ const sourceFiles = collectFiles(root, [
   ".vscode",
   "vite-dev.log",
   "vite-dev.log.err",
-]);
+]).filter((f) => !/\.log(\.err)?$/i.test(f.path));
 const sourceRef = await gh("GET", `${api}/git/ref/heads/source`);
 console.log(`同步源码到 source：${sourceFiles.length} 个文件`);
 const sourceCommit = await commitTree(
