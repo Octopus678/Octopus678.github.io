@@ -1479,38 +1479,19 @@
   justify-content: center;
 }
 
-.intro-device {
-  position: relative;
-  width: clamp(240px, 22vw, 330px);
-  border-radius: clamp(28px, 4vw, 44px);
-  padding: clamp(10px, 1.4vw, 16px);
-  background: linear-gradient(160deg, #23212a, #0d0c10);
-  box-shadow:
-    0 40px 90px rgba(25, 19, 16, 0.35),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.07);
+.profile-card-wrap {
+  width: clamp(280px, 24vw, 400px);
 }
 
-.intro-device img {
-  display: block;
+.profile-card-wrap .pc-card {
+  height: auto;
+  max-height: none;
   width: 100%;
-  aspect-ratio: 9 / 19;
-  object-fit: cover;
-  border-radius: clamp(20px, 3vw, 32px);
+  aspect-ratio: 0.718;
 }
 
-.intro-device-tag {
-  position: absolute;
-  left: 50%;
-  bottom: clamp(24px, 3vw, 34px);
-  transform: translateX(-50%);
-  padding: 6px 14px;
-  border-radius: 999px;
-  background: rgba(10, 9, 12, 0.6);
-  color: rgba(242, 237, 228, 0.92);
-  font-size: 10px;
-  letter-spacing: 0.24em;
-  white-space: nowrap;
-  backdrop-filter: blur(4px);
+.profile-card-wrap .pc-user-info {
+  background: linear-gradient(150deg, rgba(12, 12, 16, 0.82), rgba(20, 18, 26, 0.62));
 }
 
 .intro-lanyard {
@@ -1518,24 +1499,55 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 18px;
-  height: clamp(480px, 46vw, 620px);
+  gap: 22px;
+  height: 100%;
+  min-height: 620px;
 }
 
 .lanyard-box {
-  width: 100%;
-  max-width: 560px;
+  width: clamp(280px, 24vw, 400px);
   height: 100%;
 }
 
-.lanyard-loading {
+.lanyard-box .lanyard-wrapper {
+  transform: scale(1.25);
+}
+
+.lanyard-fallback {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 26px;
+  background:
+    radial-gradient(ellipse at 72% 16%, rgba(255, 90, 54, 0.3), transparent 55%),
+    linear-gradient(160deg, #191720, #0b0a0e);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 30px 70px rgba(25, 19, 16, 0.35);
+  overflow: hidden;
+}
+
+.lanyard-fallback::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 8px;
+  background: #ff5a36;
+}
+
+.lanyard-fallback::after {
+  content: "JIN HAOYU";
+  position: absolute;
+  inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100%;
-  font-size: 12px;
+  font-family: var(--font-latin);
+  font-size: 26px;
+  font-weight: 700;
   letter-spacing: 0.3em;
-  color: #8a5a3a;
+  color: rgba(245, 243, 239, 0.85);
 }
 
 .lanyard-hint {

@@ -305,6 +305,7 @@ class Media {
   }
 
   createTitle() {
+    if (!this.text) return;
     this.title = new Title({
       gl: this.gl,
       plane: this.plane,

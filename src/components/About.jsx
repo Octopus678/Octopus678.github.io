@@ -1,6 +1,7 @@
 import { lazy, Suspense, useMemo, useState } from "react";
 import Modal from "./Modal";
 import CircularGallery from "./CircularGallery/CircularGallery";
+import ProfileCard from "./ProfileCard/ProfileCard";
 
 const Lanyard = lazy(() => import("./Lanyard/Lanyard"));
 
@@ -34,8 +35,8 @@ const PHOTOS = Array.from({ length: 11 }, (_, i) => ({
 const INTRO_WORDS = ["节奏。", "叙事。", "留白。", "卡点。", "情绪。", "呼吸。", "克制。"];
 
 function makeIntroCard() {
-  const W = 720;
-  const H = 1012;
+  const W = 900;
+  const H = 1268;
   const canvas = document.createElement("canvas");
   canvas.width = W;
   canvas.height = H;
@@ -56,54 +57,96 @@ function makeIntroCard() {
 
   // 顶部条
   ctx.fillStyle = "#ff5a36";
-  ctx.fillRect(0, 0, W, 10);
+  ctx.fillRect(0, 0, W, 12);
 
   const sans = '"Microsoft YaHei", "PingFang SC", sans-serif';
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
 
-  // 英文名
+  const wrapText = (text, x, y, maxWidth, lineHeight) => {
+    const chars = [...text];
+    let line = "";
+    let yy = y;
+    for (const ch of chars) {
+      const test = line + ch;
+      if (ctx.measureText(test).width > maxWidth && line) {
+        ctx.fillText(line, x, yy);
+        line = ch;
+        yy += lineHeight;
+      } else {
+        line = test;
+      }
+    }
+    if (line) ctx.fillText(line, x, yy);
+    return yy;
+  };
+
   ctx.fillStyle = "rgba(245,243,239,0.55)";
-  ctx.font = `500 30px "Helvetica Neue", Arial, sans-serif`;
-  ctx.fillText("JIN HAOYU", W / 2, 130);
+  ctx.font = `500 34px "Helvetica Neue", Arial, sans-serif`;
+  ctx.fillText("EDITOR", W / 2, 110);
 
-  // 名字
   ctx.fillStyle = "#f5f3ef";
-  ctx.font = `700 104px ${sans}`;
-  ctx.fillText("晋浩宇", W / 2, 260);
+  ctx.font = `700 122px ${sans}`;
+  ctx.fillText("晋浩宇", W / 2, 240);
 
-  // 角色
   ctx.fillStyle = "#ff5a36";
-  ctx.font = `600 34px ${sans}`;
-  ctx.fillText("短视频剪辑 · 全流程内容创作者", W / 2, 368);
+  ctx.font = `600 42px ${sans}`;
+  ctx.fillText("短视频剪辑 / 全流程内容创作者", W / 2, 330);
 
-  // 分隔线
   ctx.strokeStyle = "rgba(255,90,54,0.5)";
   ctx.lineWidth = 2;
   ctx.beginPath();
-  ctx.moveTo(W / 2 - 120, 470);
-  ctx.lineTo(W / 2 + 120, 470);
+  ctx.moveTo(W / 2 - 150, 410);
+  ctx.lineTo(W / 2 + 150, 410);
   ctx.stroke();
 
-  // 简介
-  ctx.fillStyle = "rgba(245,243,239,0.78)";
+  ctx.fillStyle = "rgba(245,243,239,0.8)";
   ctx.font = `400 30px ${sans}`;
-  ctx.fillText("1 年新媒体实战经验", W / 2, 560);
-  ctx.fillText("抖音 / 快手 / 小红书 / 视频号 / 美团", W / 2, 630);
-  ctx.fillText("从脚本拆解到成片交付 · 全流程", W / 2, 700);
+  const p1 = wrapText(
+    "1 年新媒体实战经验，先后经历视频剪辑、矩阵运营两种角色。擅长对标拆解与二次创作，曾负责「锋哥大健康」IP 月度全量视频产出，具备从脚本仿写、辅助拍摄到成片交付的全流程能力。坚持数据复盘内容，用节奏讲好故事。",
+    W / 2,
+    520,
+    660,
+    54
+  );
 
-  // 联系
+  // 数据 2x2
+  const stats = [
+    { num: "1+", label: "年新媒体实战经验" },
+    { num: "5", label: "平台矩阵内容运营" },
+    { num: "2", label: "段完整职业履历" },
+    { num: "100%", label: "脚本到成片全流程" },
+  ];
+  const boxY = Math.max(p1 + 60, 780);
+  const boxW = 340;
+  const boxH = 190;
+  stats.forEach((s, i) => {
+    const col = i % 2;
+    const row = Math.floor(i / 2);
+    const x = W / 2 + (col === 0 ? -boxW / 2 - 14 : 14);
+    const y = boxY + row * (boxH + 24);
+    ctx.fillStyle = "rgba(255,90,54,0.14)";
+    ctx.strokeStyle = "rgba(255,90,54,0.4)";
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.roundRect(x, y, boxW, boxH, 22);
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle = "#f5f3ef";
+    ctx.font = `800 58px "Helvetica Neue", Arial, sans-serif`;
+    ctx.fillText(s.num, W / 2 + (col === 0 ? -14 : 14), y + 78);
+    ctx.fillStyle = "rgba(245,243,239,0.65)";
+    ctx.font = `400 24px ${sans}`;
+    ctx.fillText(s.label, W / 2 + (col === 0 ? -14 : 14), y + 128);
+  });
+
+  const contactY = boxY + 2 * (boxH + 24) + 56;
   ctx.fillStyle = "#f5f3ef";
-  ctx.font = `600 34px "Helvetica Neue", Arial, sans-serif`;
-  ctx.fillText("133 3344 3088", W / 2, 850);
+  ctx.font = `600 40px "Helvetica Neue", Arial, sans-serif`;
+  ctx.fillText("133 3344 3088", W / 2, contactY);
   ctx.fillStyle = "rgba(245,243,239,0.75)";
-  ctx.font = `400 30px "Helvetica Neue", Arial, sans-serif`;
-  ctx.fillText("pidtiy@163.com", W / 2, 910);
-
-  // 底栏
-  ctx.fillStyle = "rgba(245,243,239,0.4)";
-  ctx.font = `400 22px "Helvetica Neue", Arial, sans-serif`;
-  ctx.fillText("EDITOR · NANJING", W / 2, 966);
+  ctx.font = `400 32px "Helvetica Neue", Arial, sans-serif`;
+  ctx.fillText("pidtiy@163.com", W / 2, contactY + 62);
 
   return canvas.toDataURL("image/png");
 }
@@ -145,15 +188,27 @@ export default function About() {
 
           <div className="intro-grid">
             <div className="intro-photo">
-              <div className="intro-device">
-                <img src={PHOTOS[0].src} alt="晋浩宇现场照片" loading="lazy" />
-                <span className="intro-device-tag">EDITOR · JIN HAOYU</span>
+              <div className="profile-card-wrap">
+                <ProfileCard
+                  avatarUrl={PHOTOS[0].src}
+                  name="晋浩宇"
+                  title="短视频剪辑 / 全流程内容创作者"
+                  handle="jinhaoyu"
+                  status="南京 · 随时可聊"
+                  contactText="联系我"
+                  behindGlowColor="rgba(255, 90, 54, 0.45)"
+                  behindGlowSize="55%"
+                  innerGradient="linear-gradient(145deg, #3a12108c 0%, #ff5a3644 100%)"
+                  onContactClick={() =>
+                    document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })
+                  }
+                />
               </div>
             </div>
 
             <div className="intro-lanyard">
               <div className="lanyard-box">
-                <Suspense fallback={<div className="lanyard-loading latin">LOADING CARD…</div>}>
+                <Suspense fallback={<div className="lanyard-fallback" />}>
                   <Lanyard frontImage={introCard} backImage={PHOTOS[1].src} imageFit="cover" />
                 </Suspense>
               </div>
@@ -251,7 +306,7 @@ export default function About() {
 
         <div className="gallery-section reveal">
           <div className="gallery-headline">
-            <span className="overline">Shoot / 现场照片</span>
+            <span className="overline">Gallery / 现场照片</span>
             <h3>镜头内外，都是我日常</h3>
             <p>按住拖动 / 滚轮 / 方向键浏览 · 点击照片查看大图</p>
           </div>
@@ -259,7 +314,7 @@ export default function About() {
             <CircularGallery
               items={PHOTOS.map((p, i) => ({
                 image: p.src,
-                text: `SHOOT ${String(i + 1).padStart(2, "0")}`,
+                text: "",
               }))}
               bend={2.5}
               textColor="#d98a5a"
