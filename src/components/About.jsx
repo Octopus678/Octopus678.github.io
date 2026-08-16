@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Modal from "./Modal";
 
 const STATS = [
@@ -34,19 +34,53 @@ export default function About() {
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
   const [modal, setModal] = useState(false);
-  const timer = useRef(null);
-
-  const next = useCallback(() => setIndex((i) => (i + 1) % PHOTOS.length), []);
+  const trackRef = useRef(null);
+  const offsetRef = useRef(0);
+  const pausedRef = useRef(false);
+  const rafRef = useRef(0);
+  const lastRef = useRef(0);
 
   useEffect(() => {
-    if (paused) return;
-    timer.current = setInterval(next, 4200);
-    return () => clearInterval(timer.current);
-  }, [paused, next]);
+    pausedRef.current = paused;
+  }, [paused]);
+
+  useEffect(() => {
+    const itemH = () => trackRef.current?.parentElement.clientHeight || 600;
+    const loop = (t) => {
+      if (!lastRef.current) lastRef.current = t;
+      const dt = t - lastRef.current;
+      lastRef.current = t;
+      if (!pausedRef.current) {
+        // 每张照片约停留 6 秒，匀速滚动
+        offsetRef.current += (dt * itemH()) / 6000;
+        const cycle = itemH() * PHOTOS.length;
+        if (offsetRef.current >= cycle) offsetRef.current -= cycle;
+        if (trackRef.current) trackRef.current.style.transform = `translateY(${-offsetRef.current}px)`;
+        const active = Math.floor(offsetRef.current / itemH()) % PHOTOS.length;
+        setIndex((prev) => (prev === active ? prev : active));
+      }
+      rafRef.current = requestAnimationFrame(loop);
+    };
+    rafRef.current = requestAnimationFrame(loop);
+    const onResize = () => {
+      if (trackRef.current) trackRef.current.style.transform = `translateY(${-offsetRef.current}px)`;
+    };
+    window.addEventListener("resize", onResize);
+    return () => {
+      cancelAnimationFrame(rafRef.current);
+      window.removeEventListener("resize", onResize);
+    };
+  }, []);
 
   const openModal = (i) => {
     setIndex(i);
     setModal(true);
+  };
+
+  const jumpTo = (i) => {
+    const h = trackRef.current?.parentElement.clientHeight || 600;
+    offsetRef.current = i * h;
+    setIndex(i);
   };
 
   return (
@@ -169,17 +203,26 @@ export default function About() {
             >
               <div className="phone-frame">
                 <div className="phone-screen">
-                  {PHOTOS.map((p, i) => (
-                    <button
-                      type="button"
-                      key={p.src}
-                      className={`focus-slide ${i === index ? "is-active" : ""}`}
-                      onClick={() => openModal(i)}
-                      aria-label={`查看照片 ${p.name}`}
-                    >
-                      <img src={p.src} alt={p.name} loading="lazy" />
-                    </button>
-                  ))}
+                  <div className="photo-track" ref={trackRef}>
+                    {[0, 1].map((dup) => (
+                      <span key={dup} style={{ display: "contents" }}>
+                        {PHOTOS.map((p, i) => (
+                          <button
+                            type="button"
+                            key={`${dup}-${p.src}`}
+                            className="photo-item"
+                            onClick={() => openModal(i)}
+                            aria-label={`查看照片 ${p.name}`}
+                          >
+                            <img src={p.src} alt={p.name} loading="lazy" />
+                            <span className="photo-item-num latin">
+                              {String(i + 1).padStart(2, "0")}
+                            </span>
+                          </button>
+                        ))}
+                      </span>
+                    ))}
+                  </div>
                   <span className="phone-time latin">09:41</span>
                   <span className="phone-dyn" aria-hidden="true" />
                 </div>
@@ -200,7 +243,7 @@ export default function About() {
                   type="button"
                   key={p.src}
                   className={`focus-dot ${i === index ? "is-active" : ""}`}
-                  onClick={() => setIndex(i)}
+                  onClick={() => jumpTo(i)}
                   aria-label={`切换到照片 ${i + 1}`}
                 />
               ))}

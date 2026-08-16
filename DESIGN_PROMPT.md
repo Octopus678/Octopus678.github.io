@@ -48,7 +48,7 @@ Build a dark, premium portfolio website for a short-video editor using React + V
 - Tech stack: React + Vite, plain CSS with custom properties, IntersectionObserver-driven reveal-on-scroll animations, no heavy animation libraries; use cubic-bezier(0.22, 1, 0.36, 1) easing and 500–900ms durations.
 - Layout: desktop-first, content max-width about 1700px, generous whitespace, editorial two-column hero headline; structure: full-screen Hero → About (portrait photo showcase) → Works (rotating video carousel) → Strengths (card grid) → full-screen closing contact.
 - Hero: full viewport, big two-line headline (e.g. "剪辑，是一种叙事。"), fixed navigation with blur-on-scroll, primary contact CTA, subtle platform marquee at the bottom.
-- Photo showcase (About): replicates Godly #159 — a cream background with a large rounded dark device frame in the center showing each photo (9:19 screen), huge outlined words scrolling vertically in the background (e.g. 节奏。叙事。留白。), a small caption, and dot navigation; photos crossfade automatically; clicking the screen opens an in-page lightbox (no navigation).
+- Photo showcase (About): replicates 素材1 / Godly #159 — a cream background with a large rounded dark device frame in the center, **all photos stacked in a vertical strip that scrolls continuously inside the 9:19 screen** (like a feed), huge outlined words scrolling vertically in the background (e.g. 节奏。叙事。留白。), a small caption, and dot navigation (dots jump the scroll); hovering pauses the scroll; clicking a photo opens an in-page lightbox (no navigation).
 - Video showcase (Works): replicates the X post's WebGL form — a pure-black scene with a glowing 3D four-sided prism in the center, each face playing one 9:16 video, the prism rotating continuously in place with a breathing glow; a pause/play control stops the rotation, hovering a face pauses it, and clicking a face opens an in-page full-screen modal (fixed inset-0, dark blurred backdrop, close button, ESC to close) with sound — no page navigation.
 - Strengths: six minimal cards with numbered labels, thin borders, hover accent underline.
 - Closing: full-viewport CTA section over the same red-black background, phone/email links, footer with copyright and back-to-top.
@@ -63,7 +63,7 @@ Build a dark, premium portfolio website for a short-video editor using React + V
 - 技术栈：React + Vite；纯 CSS 自定义属性做主题；用 IntersectionObserver 驱动滚动显现动画，不引重型动画库；缓动统一 cubic-bezier(0.22, 1, 0.36, 1)，时长 500–900ms。
 - 排版：PC 优先，内容版心约 1700px，大量留白，编辑式双栏大标题；结构为 全屏 Hero → 关于（人像照片展）→ 作品（旋转视频轮播）→ 优势（卡片栅格）→ 整屏收尾联系页。
 - Hero：整屏；两行大标题（如「剪辑，是一种叙事。」）；固定导航滚动后加毛玻璃；主 CTA 联系按钮；底部平台跑马灯。
-- 人像照片展（关于）：复刻 Godly #159 —— 米白底 + 中央大圆角深色「设备屏」（9:19 屏内展示照片）+ 背景超大描边字竖排滚动（如「节奏。叙事。留白。」）+ 极简说明与圆点导航；照片自动交叉淡入；点击屏幕在**站内弹层**中查看，不跳转。
+- 人像照片展（关于）：复刻素材1 / Godly #159 —— 米白底 + 中央大圆角深色「设备屏」（9:19），**全部照片连成竖条在屏内持续滚动**（类似信息流），背景超大描边字竖排滚动（如「节奏。叙事。留白。」）+ 极简说明与圆点导航（圆点可跳转）；悬停暂停滚动；点击照片在**站内弹层**中查看，不跳转。
 - 视频展（作品）：复刻 X 帖 WebGL 形式 —— 纯黑场景 + 中央发光四棱柱，每个面播放一支 9:16 视频，棱柱**原地持续旋转**并带呼吸光晕；暂停/继续按钮控制旋转，悬停面自动暂停，**点击面在站内全屏弹层**（固定全屏、深色毛玻璃背景、右上关闭、ESC 关闭）中带声音播放，不跳转页面。
 - 优势：六张极简卡片，带编号、细边框、悬停强调色下划线。
 - 收尾页：整屏 CTA，沿用红黑背景，电话/邮箱链接，页脚版权与回到顶部。
