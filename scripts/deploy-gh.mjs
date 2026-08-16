@@ -25,15 +25,23 @@ const headers = {
 };
 
 async function gh(method, url, body) {
-  const res = await fetch(url, {
-    method,
-    headers,
-    body: body === undefined ? undefined : JSON.stringify(body),
-  });
-  if (!res.ok && res.status !== 404) {
+  for (let attempt = 0; attempt < 4; attempt++) {
+    const res = await fetch(url, {
+      method,
+      headers,
+      body: body === undefined ? undefined : JSON.stringify(body),
+    });
+    if (res.ok || res.status === 404 || res.status === 204) {
+      return res.status === 204 ? null : res.status === 404 ? null : res.json();
+    }
+    if (attempt < 3) {
+      const wait = 2000 * 2 ** attempt;
+      console.log(`重试 ${method} ${url.split("/").pop()} (${res.status})，${wait / 1000}s 后...`);
+      await new Promise((r) => setTimeout(r, wait));
+      continue;
+    }
     throw new Error(`${method} ${url} -> ${res.status}: ${await res.text()}`);
   }
-  return res.status === 204 ? null : res.status === 404 ? null : res.json();
 }
 
 function collectFiles(dir, skip = []) {

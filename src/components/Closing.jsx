@@ -1,6 +1,10 @@
 export default function Closing() {
   return (
     <section id="contact" className="closing">
+      <div className="closing-bg" aria-hidden="true">
+        <img src="/bg.jpg" alt="" />
+      </div>
+      <div className="closing-shade" aria-hidden="true" />
       <div className="container closing-main">
         <span className="overline" style={{ justifyContent: "center" }}>
           04 / Contact — 联系我
@@ -9,7 +13,7 @@ export default function Closing() {
           有片子，<em>随时聊</em>
         </h2>
         <p className="closing-sub reveal">
-          无论是月度内容合作、单条视频代剪，还是直播项目配合，都可以先聊聊需求。
+          无论是月度内容合作、单条视频代剪，还是成片交付，都可以先聊聊需求。
         </p>
 
         <div className="closing-actions reveal">

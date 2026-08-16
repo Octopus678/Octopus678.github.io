@@ -26,11 +26,11 @@ const ICONS = {
       <path d="M5 21V10M10 21V4M15 21v-7M20 21V7" />
     </svg>
   ),
-  live: (
+  rhythm: (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <circle cx="12" cy="12" r="9" />
-      <circle cx="12" cy="12" r="2.2" fill="currentColor" stroke="none" />
-      <path d="M12 6.5a5.5 5.5 0 0 1 0 11M9 8.6a4.2 4.2 0 0 1 0 6.8" />
+      <circle cx="12" cy="12" r="3" />
+      <path d="M12 3v3M12 18v3M3 12h3M18 12h3" />
     </svg>
   ),
   speed: (
@@ -59,12 +59,12 @@ const STRENGTHS = [
   {
     icon: "data",
     title: "数据驱动复盘",
-    desc: "习惯用观看量、互动率、转化率说话，直播后系统化复盘数据，反推内容结构与运营策略的下一步。",
+    desc: "习惯用观看量、互动率、转化率说话，系统化复盘数据，反推内容结构与运营策略的下一步。",
   },
   {
-    icon: "live",
-    title: "直播操盘经验",
-    desc: "中控、场控、助播三岗都上手过，懂直播间的节奏、氛围与流程，能配合团队把一场直播跑顺。",
+    icon: "rhythm",
+    title: "审美与叙事节奏",
+    desc: "懂画面、懂卡点、懂留白：音乐、字幕、转场与情绪节奏统一调配，让每条视频都有自己的呼吸感。",
   },
   {
     icon: "speed",

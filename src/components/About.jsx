@@ -1,7 +1,10 @@
+import { useCallback, useEffect, useRef, useState } from "react";
+import Modal from "./Modal";
+
 const STATS = [
   { num: "1", sup: "+", label: "年新媒体实战经验" },
   { num: "5", sup: "", label: "平台矩阵内容运营" },
-  { num: "3", sup: "", label: "段完整职业履历" },
+  { num: "2", sup: "", label: "段完整职业履历" },
   { num: "100", sup: "%", label: "脚本到成片全流程" },
 ];
 
@@ -13,20 +16,37 @@ const EXPERIENCES = [
     desc: "负责「锋哥大健康」IP 账号月度全量视频产出。参考对标账号进行文案拆解与二次创作，从脚本仿写、辅助拍摄到成片交付全流程独立完成，为旗下 IP 打造爆款短视频，支持多种风格快速产出。",
   },
   {
-    company: "南京拔地互联网",
-    role: "中控 / 场控 / 助播",
-    date: "2025.09 — 2026.01",
-    desc: "负责直播全链路支持：商品链接制作、上下架管理与品牌方对接；协助主播互动、营造直播间氛围，提升停留与参与度；参与直播复盘与流程优化，推动整体运营效率提升。",
-  },
-  {
     company: "良欣国际",
     role: "多平台矩阵运营",
     date: "2025.07 — 2025.09",
-    desc: "负责抖音、快手、小红书、视频号、美团等多平台账号矩阵运营，统筹内容发布与账号管理；直播后进行观看量、互动率、转化率等系统化数据分析，为内容与运营策略提供数据支持。",
+    desc: "负责抖音、快手、小红书、视频号、美团等多平台账号矩阵运营，统筹内容发布与账号管理；对观看量、互动率、转化率等数据做系统化分析，为内容与运营策略提供数据支持。",
   },
 ];
 
+const PHOTOS = Array.from({ length: 11 }, (_, i) => ({
+  src: `/photos/p${i + 1}.jpg`,
+  name: `现场 · 0${i + 1}`,
+}));
+
 export default function About() {
+  const [index, setIndex] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const [modal, setModal] = useState(false);
+  const timer = useRef(null);
+
+  const next = useCallback(() => setIndex((i) => (i + 1) % PHOTOS.length), []);
+
+  useEffect(() => {
+    if (paused) return;
+    timer.current = setInterval(next, 4200);
+    return () => clearInterval(timer.current);
+  }, [paused, next]);
+
+  const openModal = (i) => {
+    setIndex(i);
+    setModal(true);
+  };
+
   return (
     <section id="about" className="section section--soft">
       <div className="container">
@@ -36,7 +56,7 @@ export default function About() {
             剪辑之外，<em>也懂内容</em>与数据
           </h2>
           <p className="section-note">
-            我的经历不是单一岗位：做过剪辑、做过直播、也做过矩阵运营。这让我剪片子时，
+            我的经历不是单一岗位：做过剪辑、也做过矩阵运营。这让我剪片子时，
             想的不只是画面，而是这条内容在平台上如何被看见。
           </p>
         </div>
@@ -44,7 +64,7 @@ export default function About() {
         <div className="about-grid">
           <div className="portrait-wrap reveal" style={{ "--d": "80ms" }}>
             <div className="portrait">
-              <span className="portrait-mono">JH</span>
+              <img src={PHOTOS[0].src} alt="晋浩宇工作照" loading="lazy" />
               <span className="portrait-tag">EDITOR</span>
               <div className="portrait-caption">
                 <span className="rec">
@@ -67,10 +87,10 @@ export default function About() {
             </div>
             <div className="about-role reveal">短视频剪辑 / 全流程内容创作者</div>
             <p className="about-desc reveal">
-              1 年新媒体实战经验，先后经历<strong>视频剪辑</strong>、<strong>直播操盘</strong>与
-              <strong>矩阵运营</strong>三种角色。擅长<em>对标拆解与二次创作</em>，曾负责
-              「锋哥大健康」IP 月度全量视频产出，具备从脚本仿写、辅助拍摄到成片交付的
-              <strong>全流程能力</strong>。坚持用数据复盘内容，用节奏讲好故事。
+              1 年新媒体实战经验，先后经历<strong>视频剪辑</strong>与<strong>矩阵运营</strong>
+              两种角色。擅长<em>对标拆解与二次创作</em>，曾负责「锋哥大健康」IP 月度全量视频产出，
+              具备从脚本仿写、辅助拍摄到成片交付的<strong>全流程能力</strong>。
+              坚持用数据复盘内容，用节奏讲好故事。
             </p>
 
             <div className="stats reveal">
@@ -127,7 +147,87 @@ export default function About() {
             </div>
           </div>
         </div>
+
+        <div className="gallery-panel reveal">
+          <div className="gallery-head">
+            <div>
+              <span className="overline overline--dark">Shoot / 现场照片</span>
+              <h3>镜头内外，都是我日常</h3>
+            </div>
+            <button
+              type="button"
+              className="gallery-toggle"
+              onClick={() => setPaused((p) => !p)}
+            >
+              {paused ? "▶ 继续轮播" : "❚❚ 暂停轮播"}
+            </button>
+          </div>
+
+          <div
+            className="gallery-stage"
+            onMouseEnter={() => setPaused(true)}
+            onMouseLeave={() => setPaused(false)}
+          >
+            {PHOTOS.map((p, i) => (
+              <button
+                type="button"
+                key={p.src}
+                className={`gallery-slide ${i === index ? "is-active" : ""}`}
+                onClick={() => openModal(i)}
+                aria-label={`查看照片 ${p.name}`}
+              >
+                <img src={p.src} alt={p.name} loading="lazy" />
+              </button>
+            ))}
+            <span className="gallery-index latin">
+              {String(index + 1).padStart(2, "0")} / {PHOTOS.length}
+            </span>
+            <span className="gallery-hint">点击查看大图</span>
+          </div>
+
+          <div className="gallery-thumbs">
+            {PHOTOS.map((p, i) => (
+              <button
+                type="button"
+                key={p.src}
+                className={`gallery-thumb ${i === index ? "is-active" : ""}`}
+                onClick={() => setIndex(i)}
+                aria-label={`切换到照片 ${i + 1}`}
+              >
+                <img src={p.src} alt="" loading="lazy" />
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
+
+      <Modal open={modal} onClose={() => setModal(false)}>
+        <div className="photo-modal">
+          <img src={PHOTOS[index].src} alt={PHOTOS[index].name} />
+          <div className="photo-modal-meta">
+            <span className="latin">
+              {String(index + 1).padStart(2, "0")} / {PHOTOS.length}
+            </span>
+            <span>{PHOTOS[index].name}</span>
+          </div>
+          <button
+            type="button"
+            className="photo-prev"
+            aria-label="上一张"
+            onClick={() => setIndex((index - 1 + PHOTOS.length) % PHOTOS.length)}
+          >
+            ‹
+          </button>
+          <button
+            type="button"
+            className="photo-next"
+            aria-label="下一张"
+            onClick={() => setIndex((index + 1) % PHOTOS.length)}
+          >
+            ›
+          </button>
+        </div>
+      </Modal>
     </section>
   );
 }
