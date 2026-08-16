@@ -52,8 +52,10 @@ async function gh(method, url, body, timeoutMs = 120000) {
       throw e;
     }
     clearTimeout(timer);
-    if (res.ok || res.status === 404 || res.status === 204) {
-      return res.status === 204 ? null : res.status === 404 ? null : res.json();
+    if (res.ok || res.status === 404 || res.status === 204 || (method === "DELETE" && res.status === 422)) {
+      return res.status === 204 || res.status === 404 || (method === "DELETE" && res.status === 422)
+        ? null
+        : res.json();
     }
     if (attempt < 5) {
       const wait = Math.min(2000 * 2 ** attempt, 30000);
