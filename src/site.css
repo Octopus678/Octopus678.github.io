@@ -1325,208 +1325,82 @@
   z-index: 1;
 }
 
-/* ============ Focus gallery (godly 159 style: light bg + device frame + scrolling words) ============ */
-.focus-gallery {
-  margin-top: clamp(80px, 9vw, 140px);
-  position: relative;
-  border-radius: 6px;
-  overflow: hidden;
-  background:
-    radial-gradient(ellipse 70% 55% at 50% 30%, rgba(184, 72, 24, 0.07), transparent 70%),
-    #f2ede4;
-  color: #191310;
-  padding: clamp(40px, 6vw, 96px) 0;
-}
-
-.focus-gallery::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, #b84818, transparent 70%);
-}
-
-.focus-words {
-  position: absolute;
+/* ============ Molten metal background layers ============ */
+.molten-bg-fixed {
+  position: fixed;
   inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
+  z-index: 0;
   pointer-events: none;
 }
 
-.focus-words > span {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  animation: words-scroll 26s linear infinite;
-}
-
-.focus-words > span span {
-  font-size: clamp(4rem, 9vw, 9rem);
-  font-weight: 800;
-  line-height: 1.12;
-  letter-spacing: 0.04em;
-  color: transparent;
-  -webkit-text-stroke: 1.5px rgba(25, 19, 16, 0.26);
-  white-space: nowrap;
-  padding: 0.12em 0;
-}
-
-.focus-words > span span:nth-child(2n) {
-  color: rgba(184, 72, 24, 0.22);
-  -webkit-text-stroke: 0;
-}
-
-@keyframes words-scroll {
-  from { transform: translateY(-50%); }
-  to { transform: translateY(0); }
-}
-
-.focus-stage {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.phone {
-  position: relative;
-  width: clamp(240px, 22vw, 340px);
-}
-
-.phone-frame {
-  position: relative;
-  border-radius: clamp(28px, 4vw, 44px);
-  padding: clamp(10px, 1.4vw, 16px);
-  background: linear-gradient(160deg, #23212a, #0d0c10);
-  box-shadow:
-    0 40px 90px rgba(25, 19, 16, 0.35),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.07);
-}
-
-.phone-screen {
-  position: relative;
-  aspect-ratio: 9 / 19;
-  border-radius: clamp(20px, 3vw, 32px);
-  overflow: hidden;
-  background: #17151a;
-}
-
-.photo-track {
+.hero-molten {
   position: absolute;
   inset: 0;
-  display: flex;
-  flex-direction: column;
-  will-change: transform;
+  z-index: 1;
+  mix-blend-mode: screen;
+  pointer-events: none;
 }
 
-.photo-item {
+.closing-molten {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+/* 让固定熔岩层在中间区块透出 */
+.section--soft {
+  background: rgba(14, 16, 19, 0.88);
+}
+
+.works {
+  background: rgba(5, 5, 5, 0.86);
+}
+
+/* ============ Circular gallery (React Bits 1:1) ============ */
+.gallery-section {
+  margin-top: clamp(72px, 8vw, 120px);
   position: relative;
-  flex: 0 0 100%;
-  height: 100%;
-  overflow: hidden;
-  display: block;
 }
 
-.photo-item img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.photo-item-num {
-  position: absolute;
-  right: 14px;
-  bottom: 14px;
-  z-index: 2;
-  padding: 5px 10px;
-  border-radius: 999px;
-  background: rgba(10, 9, 12, 0.55);
-  color: rgba(242, 237, 228, 0.92);
-  font-size: 10px;
-  letter-spacing: 0.18em;
-  backdrop-filter: blur(4px);
-}
-
-.phone-time {
-  position: absolute;
-  top: 12px;
-  left: 0;
-  right: 0;
-  text-align: center;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  color: rgba(242, 237, 228, 0.92);
-  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
-}
-
-.phone-dyn {
-  position: absolute;
-  top: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 68px;
-  height: 20px;
-  border-radius: 999px;
-  background: rgba(10, 9, 12, 0.85);
-}
-
-.phone-glow {
-  position: absolute;
-  inset: -30px -40px;
-  z-index: -1;
-  background: radial-gradient(ellipse at center, rgba(184, 72, 24, 0.35), transparent 70%);
-  filter: blur(26px);
-}
-
-.focus-caption {
-  margin-top: 34px;
+.gallery-headline {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
-}
-
-.focus-caption .latin {
-  font-size: 11px;
-  letter-spacing: 0.3em;
-  color: #8a5a3a;
-}
-
-.focus-caption span:last-child {
-  font-size: 15px;
-  letter-spacing: 0.06em;
-  color: #191310;
-}
-
-.focus-dots {
-  margin-top: 22px;
-  display: flex;
+  text-align: center;
   gap: 10px;
+  margin-bottom: 8px;
 }
 
-.focus-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: rgba(25, 19, 16, 0.22);
-  transition: background 0.3s ease, transform 0.3s ease;
+.gallery-headline h3 {
+  font-size: clamp(1.6rem, 2.6vw, 2.4rem);
+  font-weight: 700;
+  letter-spacing: 0.01em;
 }
 
-.focus-dot:hover {
-  transform: scale(1.25);
+.gallery-headline p {
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  color: var(--muted);
 }
 
-.focus-dot.is-active {
-  background: #b84818;
-  transform: scale(1.25);
+.circular-gallery-wrap {
+  position: relative;
+  width: 100%;
+  height: clamp(440px, 46vw, 680px);
+}
+
+.circular-gallery-wrap::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 60%;
+  height: 60%;
+  background: radial-gradient(ellipse at center, rgba(255, 90, 54, 0.08), transparent 70%);
+  pointer-events: none;
 }
 
 /* ============ Modal (in-page lightbox) ============ */

@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import Modal from "./Modal";
+import CircularGallery from "./CircularGallery/CircularGallery";
 
 const STATS = [
   { num: "1", sup: "+", label: "年新媒体实战经验" },
@@ -28,59 +29,13 @@ const PHOTOS = Array.from({ length: 11 }, (_, i) => ({
   name: `现场 · 0${i + 1}`,
 }));
 
-const FOCUS_WORDS = ["节奏。", "叙事。", "留白。", "卡点。", "情绪。", "呼吸。", "克制。"];
-
 export default function About() {
   const [index, setIndex] = useState(0);
-  const [paused, setPaused] = useState(false);
   const [modal, setModal] = useState(false);
-  const trackRef = useRef(null);
-  const offsetRef = useRef(0);
-  const pausedRef = useRef(false);
-  const rafRef = useRef(0);
-  const lastRef = useRef(0);
-
-  useEffect(() => {
-    pausedRef.current = paused;
-  }, [paused]);
-
-  useEffect(() => {
-    const itemH = () => trackRef.current?.parentElement.clientHeight || 600;
-    const loop = (t) => {
-      if (!lastRef.current) lastRef.current = t;
-      const dt = t - lastRef.current;
-      lastRef.current = t;
-      if (!pausedRef.current) {
-        // 每张照片约停留 6 秒，匀速滚动
-        offsetRef.current += (dt * itemH()) / 6000;
-        const cycle = itemH() * PHOTOS.length;
-        if (offsetRef.current >= cycle) offsetRef.current -= cycle;
-        if (trackRef.current) trackRef.current.style.transform = `translateY(${-offsetRef.current}px)`;
-        const active = Math.floor(offsetRef.current / itemH()) % PHOTOS.length;
-        setIndex((prev) => (prev === active ? prev : active));
-      }
-      rafRef.current = requestAnimationFrame(loop);
-    };
-    rafRef.current = requestAnimationFrame(loop);
-    const onResize = () => {
-      if (trackRef.current) trackRef.current.style.transform = `translateY(${-offsetRef.current}px)`;
-    };
-    window.addEventListener("resize", onResize);
-    return () => {
-      cancelAnimationFrame(rafRef.current);
-      window.removeEventListener("resize", onResize);
-    };
-  }, []);
 
   const openModal = (i) => {
     setIndex(i);
     setModal(true);
-  };
-
-  const jumpTo = (i) => {
-    const h = trackRef.current?.parentElement.clientHeight || 600;
-    offsetRef.current = i * h;
-    setIndex(i);
   };
 
   return (
@@ -184,70 +139,26 @@ export default function About() {
           </div>
         </div>
 
-        <div className="focus-gallery reveal">
-          <div className="focus-words" aria-hidden="true">
-            {[0, 1].map((dup) => (
-              <span key={dup} style={{ display: "contents" }}>
-                {FOCUS_WORDS.map((w) => (
-                  <span key={`${dup}-${w}`}>{w}</span>
-                ))}
-              </span>
-            ))}
+        <div className="gallery-section reveal">
+          <div className="gallery-headline">
+            <span className="overline">Shoot / 现场照片</span>
+            <h3>镜头内外，都是我日常</h3>
+            <p>按住拖动 / 滚轮 / 方向键浏览 · 点击照片查看大图</p>
           </div>
-
-          <div className="focus-stage">
-            <div
-              className="phone"
-              onMouseEnter={() => setPaused(true)}
-              onMouseLeave={() => setPaused(false)}
-            >
-              <div className="phone-frame">
-                <div className="phone-screen">
-                  <div className="photo-track" ref={trackRef}>
-                    {[0, 1].map((dup) => (
-                      <span key={dup} style={{ display: "contents" }}>
-                        {PHOTOS.map((p, i) => (
-                          <button
-                            type="button"
-                            key={`${dup}-${p.src}`}
-                            className="photo-item"
-                            onClick={() => openModal(i)}
-                            aria-label={`查看照片 ${p.name}`}
-                          >
-                            <img src={p.src} alt={p.name} loading="lazy" />
-                            <span className="photo-item-num latin">
-                              {String(i + 1).padStart(2, "0")}
-                            </span>
-                          </button>
-                        ))}
-                      </span>
-                    ))}
-                  </div>
-                  <span className="phone-time latin">09:41</span>
-                  <span className="phone-dyn" aria-hidden="true" />
-                </div>
-              </div>
-              <div className="phone-glow" aria-hidden="true" />
-            </div>
-
-            <div className="focus-caption">
-              <span className="latin">
-                SHOOT · {String(index + 1).padStart(2, "0")} / {PHOTOS.length}
-              </span>
-              <span>镜头内外，都是我日常</span>
-            </div>
-
-            <div className="focus-dots">
-              {PHOTOS.map((p, i) => (
-                <button
-                  type="button"
-                  key={p.src}
-                  className={`focus-dot ${i === index ? "is-active" : ""}`}
-                  onClick={() => jumpTo(i)}
-                  aria-label={`切换到照片 ${i + 1}`}
-                />
-              ))}
-            </div>
+          <div className="circular-gallery-wrap">
+            <CircularGallery
+              items={PHOTOS.map((p, i) => ({
+                image: p.src,
+                text: `SHOOT ${String(i + 1).padStart(2, "0")}`,
+              }))}
+              bend={2.5}
+              textColor="#d98a5a"
+              borderRadius={0.06}
+              font="bold 26px 'Microsoft YaHei', 'PingFang SC', sans-serif"
+              scrollSpeed={1.8}
+              scrollEase={0.05}
+              onItemClick={openModal}
+            />
           </div>
         </div>
       </div>

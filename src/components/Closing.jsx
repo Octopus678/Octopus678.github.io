@@ -1,8 +1,32 @@
+import MoltenMetal from "./MoltenMetal/MoltenMetal";
+
 export default function Closing() {
   return (
     <section id="contact" className="closing">
       <div className="closing-bg" aria-hidden="true">
         <img src="/bg.jpg" alt="" />
+      </div>
+      <div className="closing-molten" aria-hidden="true">
+        <MoltenMetal
+          color1="#2a0802"
+          color2="#ff5a36"
+          color3="#ffd9b0"
+          speed={0.4}
+          scale={3.4}
+          detail={3}
+          glow={1.9}
+          coreSize={0.12}
+          swirl={1.1}
+          fold={-0.25}
+          blackPoint={0.14}
+          brightness={1.15}
+          colorMode="ember"
+          grain
+          grainIntensity={0.06}
+          mouseInteraction
+          mouseStrength={0.25}
+          opacity={0.5}
+        />
       </div>
       <div className="closing-shade" aria-hidden="true" />
       <div className="container closing-main">
