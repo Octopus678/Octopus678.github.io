@@ -23,20 +23,21 @@ export default function Works() {
             最近剪过的<em>成片</em>
           </h2>
           <p className="section-note">
-            四支 9:16 竖屏成片，环形轮播持续旋转。悬停暂停，点击卡片在站内打开观看。
+            四支 9:16 竖屏成片组成旋转视频柱，在黑暗中持续转动。悬停暂停，点击画面在站内打开观看。
           </p>
         </div>
       </div>
 
-      <div className="ring-stage reveal">
-        <div className={`ring ${spinning ? "" : "ring--paused"}`}>
+      <div className="prism-stage reveal">
+        <div className="prism-glow" aria-hidden="true" />
+        <div className={`prism ${spinning ? "" : "prism--paused"}`}>
           {VIDEOS.map((v, i) => (
             <button
               type="button"
               key={v.file}
-              className="ring-card"
+              className="prism-face"
               style={{
-                transform: `rotateY(${i * 90}deg) translateZ(360px)`,
+                transform: `rotateY(${i * 90}deg) translateZ(200px)`,
               }}
               onClick={() => setActive(v)}
               onMouseEnter={() => setHoverPaused(true)}
@@ -52,34 +53,30 @@ export default function Works() {
                 autoPlay
                 preload="metadata"
               />
-              <span className="ring-card-tag latin">9:16 REEL</span>
-              <span className="ring-card-name">
+              <span className="prism-face-tag latin">9:16 REEL</span>
+              <span className="prism-face-name">
                 {v.name}
                 <small>{v.tag}</small>
               </span>
-              <span className="ring-card-play" aria-hidden="true">
+              <span className="prism-face-play" aria-hidden="true">
                 ▶
               </span>
             </button>
           ))}
-          <div className="ring-hub">
-            <span className="latin">REEL</span>
-            <strong>2026</strong>
-          </div>
         </div>
 
-        <div className="ring-controls">
+        <div className="prism-controls">
           <button
             type="button"
-            className={`ring-btn ${spinning ? "is-on" : ""}`}
+            className={`prism-btn ${spinning ? "is-on" : ""}`}
             onClick={() => setUserPaused((p) => !p)}
           >
-            <span className="ring-btn-icon" aria-hidden="true">
+            <span className="prism-btn-icon" aria-hidden="true">
               {spinning ? "❚❚" : "▶"}
             </span>
             {spinning ? "暂停旋转" : "继续旋转"}
           </button>
-          <span className="ring-hint">悬停卡片可暂停 · 点击卡片打开视频</span>
+          <span className="prism-hint">悬停画面可暂停 · 点击画面打开视频</span>
         </div>
       </div>
 

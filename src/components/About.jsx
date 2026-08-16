@@ -28,6 +28,8 @@ const PHOTOS = Array.from({ length: 11 }, (_, i) => ({
   name: `现场 · 0${i + 1}`,
 }));
 
+const FOCUS_WORDS = ["节奏。", "叙事。", "留白。", "卡点。", "情绪。", "呼吸。", "克制。"];
+
 export default function About() {
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
@@ -148,55 +150,61 @@ export default function About() {
           </div>
         </div>
 
-        <div className="gallery-panel reveal">
-          <div className="gallery-head">
-            <div>
-              <span className="overline overline--dark">Shoot / 现场照片</span>
-              <h3>镜头内外，都是我日常</h3>
-            </div>
-            <button
-              type="button"
-              className="gallery-toggle"
-              onClick={() => setPaused((p) => !p)}
+        <div className="focus-gallery reveal">
+          <div className="focus-words" aria-hidden="true">
+            {[0, 1].map((dup) => (
+              <span key={dup} style={{ display: "contents" }}>
+                {FOCUS_WORDS.map((w) => (
+                  <span key={`${dup}-${w}`}>{w}</span>
+                ))}
+              </span>
+            ))}
+          </div>
+
+          <div className="focus-stage">
+            <div
+              className="phone"
+              onMouseEnter={() => setPaused(true)}
+              onMouseLeave={() => setPaused(false)}
             >
-              {paused ? "▶ 继续轮播" : "❚❚ 暂停轮播"}
-            </button>
-          </div>
+              <div className="phone-frame">
+                <div className="phone-screen">
+                  {PHOTOS.map((p, i) => (
+                    <button
+                      type="button"
+                      key={p.src}
+                      className={`focus-slide ${i === index ? "is-active" : ""}`}
+                      onClick={() => openModal(i)}
+                      aria-label={`查看照片 ${p.name}`}
+                    >
+                      <img src={p.src} alt={p.name} loading="lazy" />
+                    </button>
+                  ))}
+                  <span className="phone-time latin">09:41</span>
+                  <span className="phone-dyn" aria-hidden="true" />
+                </div>
+              </div>
+              <div className="phone-glow" aria-hidden="true" />
+            </div>
 
-          <div
-            className="gallery-stage"
-            onMouseEnter={() => setPaused(true)}
-            onMouseLeave={() => setPaused(false)}
-          >
-            {PHOTOS.map((p, i) => (
-              <button
-                type="button"
-                key={p.src}
-                className={`gallery-slide ${i === index ? "is-active" : ""}`}
-                onClick={() => openModal(i)}
-                aria-label={`查看照片 ${p.name}`}
-              >
-                <img src={p.src} alt={p.name} loading="lazy" />
-              </button>
-            ))}
-            <span className="gallery-index latin">
-              {String(index + 1).padStart(2, "0")} / {PHOTOS.length}
-            </span>
-            <span className="gallery-hint">点击查看大图</span>
-          </div>
+            <div className="focus-caption">
+              <span className="latin">
+                SHOOT · {String(index + 1).padStart(2, "0")} / {PHOTOS.length}
+              </span>
+              <span>镜头内外，都是我日常</span>
+            </div>
 
-          <div className="gallery-thumbs">
-            {PHOTOS.map((p, i) => (
-              <button
-                type="button"
-                key={p.src}
-                className={`gallery-thumb ${i === index ? "is-active" : ""}`}
-                onClick={() => setIndex(i)}
-                aria-label={`切换到照片 ${i + 1}`}
-              >
-                <img src={p.src} alt="" loading="lazy" />
-              </button>
-            ))}
+            <div className="focus-dots">
+              {PHOTOS.map((p, i) => (
+                <button
+                  type="button"
+                  key={p.src}
+                  className={`focus-dot ${i === index ? "is-active" : ""}`}
+                  onClick={() => setIndex(i)}
+                  aria-label={`切换到照片 ${i + 1}`}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </div>
