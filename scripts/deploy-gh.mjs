@@ -1,5 +1,7 @@
 /**
- * 通过 GitHub API 部署 dist 到 gh-pages 分支并启用 GitHub Pages。
+ * 通过 GitHub API 部署网站。
+ * - main 分支 = 构建后的成品（用户主页站点只能从 main 发布）
+ * - source 分支 = 源码备份
  * 不依赖 git push，国内网络访问 github.com 被重置时依然可用。
  * 用法：npm run deploy（或设置 GH_TOKEN 后 node scripts/deploy-gh.mjs）
  */
@@ -52,7 +54,7 @@ function collectFiles(dir, skip = []) {
 async function commitTree(files, message, parentSha) {
   const blobs = [];
   for (const f of files) {
-    const content = fs.readFileSync(f.full).toString("base64");
+    const content = f.full ? fs.readFileSync(f.full).toString("base64") : "";
     const blob = await gh("POST", `${api}/git/blobs`, {
       content,
       encoding: "base64",
@@ -84,7 +86,7 @@ const mainRef = await gh("GET", `${api}/git/ref/heads/main`);
 if (!mainRef) throw new Error("远程 main 分支不存在");
 const mainSha = mainRef.object.sha;
 
-// 1) 同步源码到 main
+// 1) 同步源码到 source 分支
 const sourceFiles = collectFiles(root, [
   ".git",
   "node_modules",
@@ -93,40 +95,38 @@ const sourceFiles = collectFiles(root, [
   "vite-dev.log",
   "vite-dev.log.err",
 ]);
-console.log(`同步源码到 main：${sourceFiles.length} 个文件`);
-const mainCommit = await commitTree(
+const sourceRef = await gh("GET", `${api}/git/ref/heads/source`);
+console.log(`同步源码到 source：${sourceFiles.length} 个文件`);
+const sourceCommit = await commitTree(
   sourceFiles,
   "chore: 同步源码",
-  mainSha
+  sourceRef ? sourceRef.object.sha : mainSha
 );
-await updateRef("main", mainCommit);
-console.log("main 已更新");
+await updateRef("source", sourceCommit);
+console.log("source 分支已更新");
 
-// 2) 部署 dist 到 gh-pages
+// 2) 部署 dist 到 main（用户主页站点只能从 main 发布）
 const distDir = path.join(root, "dist");
 if (!fs.existsSync(path.join(distDir, "index.html"))) {
   throw new Error("dist/index.html 不存在，请先执行 npm run build");
 }
 const distFiles = collectFiles(distDir);
-console.log(`部署到 gh-pages：${distFiles.length} 个文件`);
-const pagesCommit = await commitTree(
+distFiles.push({ path: ".nojekyll", full: null });
+console.log(`部署到 main：${distFiles.length} 个文件`);
+const mainCommit = await commitTree(
   distFiles,
   "deploy: 作品集更新",
-  mainCommit
+  mainSha
 );
-await updateRef("gh-pages", pagesCommit);
-console.log("gh-pages 已更新");
+await updateRef("main", mainCommit);
+console.log("main 分支已更新（构建产物）");
 
-// 3) 启用/切换 Pages 来源
-let pages = await gh("GET", `${api}/pages`);
-const pagesBody = { source: { branch: "gh-pages", path: "/" } };
-if (pages) {
-  await gh("PATCH", `${api}/pages`, pagesBody);
-} else {
-  pages = await gh("POST", `${api}/pages`, pagesBody);
-}
+// 3) 清理多余的 gh-pages 分支（避免混淆）
+await gh("DELETE", `${api}/git/refs/heads/gh-pages`);
+console.log("已清理 gh-pages 分支");
 
 // 4) 等待构建完成
+let pages = await gh("GET", `${api}/pages`);
 for (let i = 0; i < 40; i++) {
   await new Promise((r) => setTimeout(r, 3000));
   pages = await gh("GET", `${api}/pages`);

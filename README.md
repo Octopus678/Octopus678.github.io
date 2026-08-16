@@ -2,6 +2,8 @@
 
 基于 React + Vite 的个人作品集网站，暗色系、科技感、克制风格，面向 PC 端展示（版心 1700px）。
 
+**在线地址：https://octopus678.github.io/**（手机、任何电脑均可访问）
+
 ## 运行
 
 ```bash
@@ -31,3 +33,9 @@ npm run build      # 生产构建
 - 开发：`npm run dev`
 - 构建：`npm run build`
 - 预览构建产物：`npm run preview`
+- **发布更新：`npm run deploy`**（构建后自动同步源码并部署到 GitHub Pages，不依赖 git push）
+
+## 部署说明
+
+网站托管在 GitHub Pages（账号 Octopus678），首次部署已完成。以后修改内容后，在
+`F:\VScode\portfolio` 目录执行 `npm run deploy` 即可自动更新线上版本（约 1 分钟生效）。
