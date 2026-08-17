@@ -235,6 +235,16 @@ function Band({
   }, [hovered, dragged]);
 
   useFrame((state, delta) => {
+    const finite = (v: any) => v && isFinite(v.x) && isFinite(v.y) && isFinite(v.z);
+    if (
+      !finite(fixed.current?.translation()) ||
+      !finite(j1.current?.translation()) ||
+      !finite(j2.current?.translation()) ||
+      !finite(j3.current?.translation()) ||
+      !finite(card.current?.translation())
+    ) {
+      return;
+    }
     if (dragged && typeof dragged !== 'boolean') {
       vec.set(state.pointer.x, state.pointer.y, 0.5).unproject(state.camera);
       dir.copy(vec).sub(state.camera.position).normalize();
@@ -256,7 +266,9 @@ function Band({
       curve.points[1].copy(getLerped(j2.current));
       curve.points[2].copy(getLerped(j1.current));
       curve.points[3].copy(fixed.current.translation());
-      band.current.geometry.setPoints(curve.getPoints(isMobile ? 16 : 32));
+      try {
+        band.current.geometry.setPoints(curve.getPoints(isMobile ? 16 : 32));
+      } catch {}
       ang.copy(card.current.angvel());
       rot.copy(card.current.rotation());
       card.current.setAngvel({ x: ang.x, y: ang.y - rot.y * 0.25, z: ang.z }, true);
