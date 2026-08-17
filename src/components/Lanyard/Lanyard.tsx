@@ -235,6 +235,7 @@ function Band({
   }, [hovered, dragged]);
 
   useFrame((state, delta) => {
+    if (!isFinite(delta) || delta <= 0) return;
     const finite = (v: any) => v && isFinite(v.x) && isFinite(v.y) && isFinite(v.z);
     if (
       !finite(fixed.current?.translation()) ||
@@ -266,9 +267,13 @@ function Band({
       curve.points[1].copy(getLerped(j2.current));
       curve.points[2].copy(getLerped(j1.current));
       curve.points[3].copy(fixed.current.translation());
-      try {
-        band.current.geometry.setPoints(curve.getPoints(isMobile ? 16 : 32));
-      } catch {}
+      const pts = curve.getPoints(isMobile ? 16 : 32);
+      const clean = pts.every(p => isFinite(p.x) && isFinite(p.y) && isFinite(p.z));
+      if (clean) {
+        try {
+          band.current.geometry.setPoints(pts);
+        } catch {}
+      }
       ang.copy(card.current.angvel());
       rot.copy(card.current.rotation());
       card.current.setAngvel({ x: ang.x, y: ang.y - rot.y * 0.25, z: ang.z }, true);
