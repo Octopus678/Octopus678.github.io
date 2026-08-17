@@ -1,31 +1,9 @@
-import { lazy, Suspense, useMemo, useState } from "react";
+import { lazy, Suspense, useState } from "react";
 import Modal from "./Modal";
 import CircularGallery from "./CircularGallery/CircularGallery";
 import ProfileCard from "./ProfileCard/ProfileCard";
 
 const Lanyard = lazy(() => import("./Lanyard/Lanyard"));
-
-const STATS = [
-  { num: "1", sup: "+", label: "年新媒体实战经验" },
-  { num: "5", sup: "", label: "平台矩阵内容运营" },
-  { num: "2", sup: "", label: "段完整职业履历" },
-  { num: "100", sup: "%", label: "脚本到成片全流程" },
-];
-
-const EXPERIENCES = [
-  {
-    company: "南京锋范文化传媒",
-    role: "视频剪辑",
-    date: "2026.04 — 2026.05",
-    desc: "负责「锋哥大健康」IP 账号月度全量视频产出。参考对标账号进行文案拆解与二次创作，从脚本仿写、辅助拍摄到成片交付全流程独立完成，为旗下 IP 打造爆款短视频，支持多种风格快速产出。",
-  },
-  {
-    company: "良欣国际",
-    role: "多平台矩阵运营",
-    date: "2025.07 — 2025.09",
-    desc: "负责抖音、快手、小红书、视频号、美团等多平台账号矩阵运营，统筹内容发布与账号管理；对观看量、互动率、转化率等数据做系统化分析，为内容与运营策略提供数据支持。",
-  },
-];
 
 const PHOTOS = Array.from({ length: 11 }, (_, i) => ({
   src: `/photos/p${i + 1}.jpg`,
@@ -34,127 +12,9 @@ const PHOTOS = Array.from({ length: 11 }, (_, i) => ({
 
 const INTRO_WORDS = ["节奏。", "叙事。", "留白。", "卡点。", "情绪。", "呼吸。", "克制。"];
 
-function makeIntroCard() {
-  const W = 900;
-  const H = 1268;
-  const canvas = document.createElement("canvas");
-  canvas.width = W;
-  canvas.height = H;
-  const ctx = canvas.getContext("2d");
-  if (!ctx) return null;
-
-  // 底色：深色 + 红色辉光
-  const bg = ctx.createLinearGradient(0, 0, W, H);
-  bg.addColorStop(0, "#191720");
-  bg.addColorStop(1, "#0b0a0e");
-  ctx.fillStyle = bg;
-  ctx.fillRect(0, 0, W, H);
-  const glow = ctx.createRadialGradient(W * 0.7, H * 0.18, 10, W * 0.7, H * 0.18, 420);
-  glow.addColorStop(0, "rgba(255,90,54,0.35)");
-  glow.addColorStop(1, "rgba(255,90,54,0)");
-  ctx.fillStyle = glow;
-  ctx.fillRect(0, 0, W, H);
-
-  // 顶部条
-  ctx.fillStyle = "#ff5a36";
-  ctx.fillRect(0, 0, W, 12);
-
-  const sans = '"Microsoft YaHei", "PingFang SC", sans-serif';
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-
-  const wrapText = (text, x, y, maxWidth, lineHeight) => {
-    const chars = [...text];
-    let line = "";
-    let yy = y;
-    for (const ch of chars) {
-      const test = line + ch;
-      if (ctx.measureText(test).width > maxWidth && line) {
-        ctx.fillText(line, x, yy);
-        line = ch;
-        yy += lineHeight;
-      } else {
-        line = test;
-      }
-    }
-    if (line) ctx.fillText(line, x, yy);
-    return yy;
-  };
-
-  ctx.fillStyle = "rgba(245,243,239,0.55)";
-  ctx.font = `500 34px "Helvetica Neue", Arial, sans-serif`;
-  ctx.fillText("EDITOR", W / 2, 110);
-
-  ctx.fillStyle = "#f5f3ef";
-  ctx.font = `700 122px ${sans}`;
-  ctx.fillText("晋浩宇", W / 2, 240);
-
-  ctx.fillStyle = "#ff5a36";
-  ctx.font = `600 42px ${sans}`;
-  ctx.fillText("短视频剪辑 / 全流程内容创作者", W / 2, 330);
-
-  ctx.strokeStyle = "rgba(255,90,54,0.5)";
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.moveTo(W / 2 - 150, 410);
-  ctx.lineTo(W / 2 + 150, 410);
-  ctx.stroke();
-
-  ctx.fillStyle = "rgba(245,243,239,0.8)";
-  ctx.font = `400 30px ${sans}`;
-  const p1 = wrapText(
-    "1 年新媒体实战经验，先后经历视频剪辑、矩阵运营两种角色。擅长对标拆解与二次创作，曾负责「锋哥大健康」IP 月度全量视频产出，具备从脚本仿写、辅助拍摄到成片交付的全流程能力。坚持数据复盘内容，用节奏讲好故事。",
-    W / 2,
-    520,
-    660,
-    54
-  );
-
-  // 数据 2x2
-  const stats = [
-    { num: "1+", label: "年新媒体实战经验" },
-    { num: "5", label: "平台矩阵内容运营" },
-    { num: "2", label: "段完整职业履历" },
-    { num: "100%", label: "脚本到成片全流程" },
-  ];
-  const boxY = Math.max(p1 + 60, 780);
-  const boxW = 340;
-  const boxH = 190;
-  stats.forEach((s, i) => {
-    const col = i % 2;
-    const row = Math.floor(i / 2);
-    const x = W / 2 + (col === 0 ? -boxW / 2 - 14 : 14);
-    const y = boxY + row * (boxH + 24);
-    ctx.fillStyle = "rgba(255,90,54,0.14)";
-    ctx.strokeStyle = "rgba(255,90,54,0.4)";
-    ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    ctx.roundRect(x, y, boxW, boxH, 22);
-    ctx.fill();
-    ctx.stroke();
-    ctx.fillStyle = "#f5f3ef";
-    ctx.font = `800 58px "Helvetica Neue", Arial, sans-serif`;
-    ctx.fillText(s.num, W / 2 + (col === 0 ? -14 : 14), y + 78);
-    ctx.fillStyle = "rgba(245,243,239,0.65)";
-    ctx.font = `400 24px ${sans}`;
-    ctx.fillText(s.label, W / 2 + (col === 0 ? -14 : 14), y + 128);
-  });
-
-  const contactY = boxY + 2 * (boxH + 24) + 56;
-  ctx.fillStyle = "#f5f3ef";
-  ctx.font = `600 40px "Helvetica Neue", Arial, sans-serif`;
-  ctx.fillText("133 3344 3088", W / 2, contactY);
-  ctx.fillStyle = "rgba(245,243,239,0.75)";
-  ctx.font = `400 32px "Helvetica Neue", Arial, sans-serif`;
-  ctx.fillText("pidtiy@163.com", W / 2, contactY + 62);
-
-  return canvas.toDataURL("image/png");
-}
-
 export default function About() {
   const [index, setIndex] = useState(0);
   const [modal, setModal] = useState(false);
-  const introCard = useMemo(() => makeIntroCard(), []);
 
   const openModal = (i) => {
     setIndex(i);
@@ -209,97 +69,14 @@ export default function About() {
             <div className="intro-lanyard">
               <div className="lanyard-box">
                 <Suspense fallback={<div className="lanyard-fallback" />}>
-                  <Lanyard frontImage={introCard} backImage={PHOTOS[1].src} imageFit="cover" />
+                  <Lanyard
+                    frontImage={PHOTOS[7].src}
+                    backImage={PHOTOS[1].src}
+                    imageFit="cover"
+                  />
                 </Suspense>
               </div>
-              <p className="lanyard-hint">按住卡牌拖动 · 可以翻转 · 这是我的名片</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="about-grid">
-          <div className="portrait-wrap reveal" style={{ "--d": "80ms" }}>
-            <div className="portrait">
-              <img src={PHOTOS[0].src} alt="晋浩宇工作照" loading="lazy" />
-              <span className="portrait-tag">EDITOR</span>
-              <div className="portrait-caption">
-                <span className="rec">
-                  <i aria-hidden="true" />
-                  ON SET
-                </span>
-                <span>JIN HAOYU</span>
-              </div>
-            </div>
-            <i className="portrait-frame-corner tl" aria-hidden="true" />
-            <i className="portrait-frame-corner tr" aria-hidden="true" />
-            <i className="portrait-frame-corner bl" aria-hidden="true" />
-            <i className="portrait-frame-corner br" aria-hidden="true" />
-          </div>
-
-          <div className="about-body">
-            <div className="about-name reveal">
-              <h3>晋浩宇</h3>
-              <span className="en latin">JIN HAOYU</span>
-            </div>
-            <div className="about-role reveal">短视频剪辑 / 全流程内容创作者</div>
-            <p className="about-desc reveal">
-              1 年新媒体实战经验，先后经历<strong>视频剪辑</strong>与<strong>矩阵运营</strong>
-              两种角色。擅长<em>对标拆解与二次创作</em>，曾负责「锋哥大健康」IP 月度全量视频产出，
-              具备从脚本仿写、辅助拍摄到成片交付的<strong>全流程能力</strong>。
-              坚持用数据复盘内容，用节奏讲好故事。
-            </p>
-
-            <div className="stats reveal">
-              {STATS.map((s) => (
-                <div className="stat" key={s.label}>
-                  <div className="num latin">
-                    {s.num}
-                    {s.sup && <sup>{s.sup}</sup>}
-                  </div>
-                  <div className="label">{s.label}</div>
-                </div>
-              ))}
-            </div>
-
-            <div className="about-lower">
-              <ul className="exp-list reveal">
-                {EXPERIENCES.map((e) => (
-                  <li className="exp-item" key={e.company}>
-                    <div className="head">
-                      <div>
-                        <h4>{e.company}</h4>
-                        <span className="role">{e.role}</span>
-                      </div>
-                      <span className="date latin">{e.date}</span>
-                    </div>
-                    <p>{e.desc}</p>
-                  </li>
-                ))}
-              </ul>
-
-              <div className="contact-card reveal" style={{ "--d": "120ms" }}>
-                <h5 className="latin">Contact / 联系方式</h5>
-                <div className="contact-row">
-                  <span className="k">电话</span>
-                  <a className="v latin" href="tel:+8613333443088">
-                    133 3344 3088
-                  </a>
-                </div>
-                <div className="contact-row">
-                  <span className="k">邮箱</span>
-                  <a className="v" href="mailto:pidtiy@163.com">
-                    pidtiy@163.com
-                  </a>
-                </div>
-                <div className="contact-row">
-                  <span className="k">常驻</span>
-                  <span className="v">南京 · 中国</span>
-                </div>
-                <div className="contact-edu">
-                  <span>教育：山西工学院 · 本科</span>
-                  <span className="right latin">2021 — 2025</span>
-                </div>
-              </div>
+              <p className="lanyard-hint">按住卡牌拖动 · 可以翻转</p>
             </div>
           </div>
         </div>
@@ -312,7 +89,7 @@ export default function About() {
           </div>
           <div className="circular-gallery-wrap">
             <CircularGallery
-              items={PHOTOS.map((p, i) => ({
+              items={PHOTOS.map((p) => ({
                 image: p.src,
                 text: "",
               }))}

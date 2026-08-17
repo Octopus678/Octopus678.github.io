@@ -1469,8 +1469,9 @@
   position: relative;
   z-index: 1;
   display: grid;
-  grid-template-columns: minmax(280px, 420px) 1fr;
-  gap: clamp(40px, 6vw, 110px);
+  grid-template-columns: 400px 400px;
+  justify-content: center;
+  gap: clamp(40px, 6vw, 100px);
   align-items: center;
 }
 
@@ -1480,14 +1481,12 @@
 }
 
 .profile-card-wrap {
-  width: clamp(280px, 24vw, 400px);
+  width: 400px;
 }
 
 .profile-card-wrap .pc-card {
-  height: auto;
+  height: 560px;
   max-height: none;
-  width: 100%;
-  aspect-ratio: 0.718;
 }
 
 .profile-card-wrap .pc-user-info {
@@ -1499,18 +1498,18 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 22px;
-  height: 100%;
-  min-height: 620px;
+  gap: 18px;
+  height: 560px;
 }
 
 .lanyard-box {
-  width: clamp(280px, 24vw, 400px);
-  height: 100%;
+  width: 400px;
+  height: 560px;
+  overflow: visible;
 }
 
 .lanyard-box .lanyard-wrapper {
-  transform: scale(1.25);
+  transform: scale(1.08);
 }
 
 .lanyard-fallback {
@@ -1558,10 +1557,20 @@
 
 @media (max-width: 1024px) {
   .intro-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(280px, 360px);
+    gap: 56px;
+  }
+  .profile-card-wrap,
+  .lanyard-box {
+    width: min(360px, 84vw);
+  }
+  .profile-card-wrap .pc-card,
+  .intro-lanyard,
+  .lanyard-box {
+    height: 500px;
   }
   .intro-lanyard {
-    height: 480px;
+    height: 500px;
   }
 }
 
