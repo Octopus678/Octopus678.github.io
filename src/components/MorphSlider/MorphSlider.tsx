@@ -150,15 +150,16 @@ mat2 rot(float a) {
   return mat2(c, -s, s, c);
 }
 
+/* 按原始比例适配（contain）：竖屏保持竖屏、横屏保持横屏，多余区域留黑 */
 vec2 coverUV(vec2 uv, vec2 res, vec2 img) {
   float rA = res.x / max(res.y, 1.0);
   float iA = img.x / max(img.y, 1.0);
   vec2 s = vec2(1.0);
   float ratio = rA / max(iA, 0.0001);
   if (ratio > 1.0) {
-    s.y = 1.0 / ratio;
-  } else {
     s.x = ratio;
+  } else {
+    s.y = 1.0 / ratio;
   }
   return (uv - 0.5) * s + 0.5;
 }
@@ -229,6 +230,10 @@ void main() {
     texture2D(tNext, sN - vec2(ca, 0.0)).b
   );
 
+  // 画面之外的区域用底色填充（保持原始比例，不拉伸）
+  if (sC.x < 0.0 || sC.x > 1.0 || sC.y < 0.0 || sC.y > 1.0) colC = uOverlay;
+  if (sN.x < 0.0 || sN.x > 1.0 || sN.y < 0.0 || sN.y > 1.0) colN = uOverlay;
+
   vec3 col = mix(colC, colN, m);
 
   float vig = smoothstep(1.25, 0.25, length(uv - 0.5));
@@ -268,6 +273,7 @@ interface EngineConfig {
   reducedMotion: boolean;
   getOptions: () => EngineOptions;
   onIndexChange: (index: number) => void;
+  onAspectChange?: (ratio: number) => void;
   dprCap: number;
 }
 
@@ -276,6 +282,7 @@ class MorphEngine {
   private items: MorphItem[];
   private getOptions: () => EngineOptions;
   private onIndexChange: (index: number) => void;
+  private onAspectChange?: (ratio: number) => void;
   private reducedMotion: boolean;
 
   private current: number;
@@ -308,6 +315,7 @@ class MorphEngine {
     this.items = config.items;
     this.getOptions = config.getOptions;
     this.onIndexChange = config.onIndexChange;
+    this.onAspectChange = config.onAspectChange;
     this.reducedMotion = config.reducedMotion;
     this.current = config.startIndex;
     this.shownIndex = config.startIndex;
@@ -426,6 +434,7 @@ class MorphEngine {
             if (index === this.current) {
               this.program.uniforms.tCurrent.value = texture;
               this.program.uniforms.uCurrentSize.value = this.sizes[index];
+              this.notifyAspect(index);
             }
           };
         }
@@ -439,6 +448,7 @@ class MorphEngine {
           if (index === this.current) {
             this.program.uniforms.tCurrent.value = texture;
             this.program.uniforms.uCurrentSize.value = this.sizes[index];
+            this.notifyAspect(index);
           }
           // 强制解码首帧，静止时也能显示画面
           try {
@@ -488,6 +498,47 @@ class MorphEngine {
   isCurrentVideoPlaying(): boolean {
     const video = this.videos[this.current];
     return !!video && !video.paused;
+  }
+
+  getCurrentVideo(): HTMLVideoElement | null {
+    return this.videos[this.current] ?? null;
+  }
+
+  /** 当前视频播放进度 0-1 */
+  getProgress(): number {
+    const video = this.videos[this.current];
+    if (!video || !isFinite(video.duration) || video.duration <= 0) return 0;
+    return Math.min(1, Math.max(0, video.currentTime / video.duration));
+  }
+
+  /** 跳转到指定进度（拖动进度条） */
+  seek(ratio: number): void {
+    const video = this.videos[this.current];
+    if (!video || !isFinite(video.duration) || video.duration <= 0) return;
+    video.currentTime = Math.min(1, Math.max(0, ratio)) * video.duration;
+    this.pendingFrame[this.current] = true;
+  }
+
+  seekStart(): void {
+    const video = this.videos[this.current];
+    if (video) video.dataset.wasPlaying = video.paused ? '' : '1';
+    if (video && !video.paused) video.pause();
+  }
+
+  seekEnd(): void {
+    const video = this.videos[this.current];
+    if (video && video.dataset.wasPlaying === '1') {
+      video.muted = false;
+      void video.play().catch(() => {});
+    }
+  }
+
+  private notifyAspect(index: number): void {
+    const size = this.sizes[index];
+    if (!size || !this.onAspectChange) return;
+    const [w, h] = size;
+    if (!w || !h) return;
+    this.onAspectChange(w / h);
   }
 
   private pauseOthers(): void {
@@ -579,6 +630,7 @@ class MorphEngine {
   private commit(target: number): void {
     this.current = target;
     this.ensureAround(target);
+    this.notifyAspect(target);
     this.pauseOthers();
     this.program.uniforms.tCurrent.value = this.textures[target];
     this.program.uniforms.uCurrentSize.value = this.sizes[target];
@@ -715,6 +767,10 @@ export default function MorphSlider({
   const engineRef = useRef<MorphEngine | null>(null);
   const [index, setIndex] = useState(startIndex);
   const [hovering, setHovering] = useState(false);
+  const [aspect, setAspect] = useState(0.5625);
+  const [progress, setProgress] = useState(0);
+  const [isSeeking, setIsSeeking] = useState(false);
+  const isSeekingRef = useRef(false);
 
   const optsRef = useRef<EngineOptions>({
     transition,
@@ -739,7 +795,8 @@ export default function MorphSlider({
       reducedMotion,
       dprCap: 2,
       getOptions: () => optsRef.current,
-      onIndexChange: setIndex
+      onIndexChange: setIndex,
+      onAspectChange: setAspect
     });
     engineRef.current = engine;
     setIndex(startIndex);
@@ -810,6 +867,57 @@ export default function MorphSlider({
     };
   }, []);
 
+  // 进度条：跟随当前视频播放进度
+  useEffect(() => {
+    let raf = 0;
+    let last = 0;
+    const tick = (t: number) => {
+      if (t - last > 120) {
+        last = t;
+        const engine = engineRef.current;
+        if (engine && !isSeekingRef.current) setProgress(engine.getProgress());
+      }
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, []);
+
+  const isCurrentVideo =
+    items[index]?.type === 'video' || /\.(mp4|webm|ogv|mov)(\?.*)?$/i.test(items[index]?.image ?? '');
+
+  const seekFromEvent = (e: React.PointerEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const ratio = Math.min(1, Math.max(0, (e.clientX - rect.left) / rect.width));
+    engineRef.current?.seek(ratio);
+    setProgress(ratio);
+  };
+
+  const onSeekDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+    try {
+      e.currentTarget.setPointerCapture(e.pointerId);
+    } catch {}
+    isSeekingRef.current = true;
+    setIsSeeking(true);
+    engineRef.current?.seekStart();
+    seekFromEvent(e);
+  };
+
+  const onSeekMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!isSeekingRef.current) return;
+    e.stopPropagation();
+    seekFromEvent(e);
+  };
+
+  const onSeekUp = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!isSeekingRef.current) return;
+    e.stopPropagation();
+    isSeekingRef.current = false;
+    setIsSeeking(false);
+    engineRef.current?.seekEnd();
+  };
+
   const onKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLDivElement>) => {
       if (e.key === 'ArrowRight') {
@@ -831,6 +939,9 @@ export default function MorphSlider({
       style={
         {
           borderRadius: `${radius}px`,
+          width: 'calc(var(--ms-h, 640px) * var(--ms-aspect, 0.5625))',
+          height: 'var(--ms-h, 640px)',
+          '--ms-aspect': aspect,
           '--ms-swap': `${(duration * 0.66).toFixed(3)}s`,
           '--ms-dot': `${(duration * 0.45).toFixed(3)}s`
         } as CSSProperties
@@ -911,6 +1022,24 @@ export default function MorphSlider({
               }}
             />
           ))}
+        </div>
+      )}
+
+      {isCurrentVideo && (
+        <div
+          className={`morph-slider-progress ${isSeeking ? 'is-seeking' : ''}`}
+          onPointerDown={onSeekDown}
+          onPointerMove={onSeekMove}
+          onPointerUp={onSeekUp}
+          onPointerCancel={onSeekUp}
+          role="slider"
+          aria-label="播放进度"
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={Math.round(progress * 100)}
+        >
+          <span className="morph-slider-progress-fill" style={{ width: `${progress * 100}%` }} />
+          <span className="morph-slider-progress-handle" style={{ left: `${progress * 100}%` }} />
         </div>
       )}
     </div>
