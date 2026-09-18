@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import MoltenMetal from "./MoltenMetal/MoltenMetal";
-import ChromaZone from "./ChromaZone/ChromaZone";
+import DriftWall from "./DriftWall/DriftWall";
 import DepthText from "./DepthText/DepthText";
 
 const MARQUEE_WORDS = [
@@ -15,13 +15,32 @@ const MARQUEE_WORDS = [
   "数据复盘",
 ];
 
-// 视频漂移墙（参考 React Bits DriftWall）：视频只分布在中部与右部，4 列上下交错漂移
-const COLUMNS = [
-  { dur: 46, reverse: false, tiles: ["interview", "fengdu", "finance1"] },
-  { dur: 38, reverse: true, tiles: ["tcm1", "politics", "outro"] },
-  { dur: 52, reverse: false, tiles: ["qixue", "liveclip", "tcm2", "flyco"] },
-  { dur: 42, reverse: true, tiles: ["sep2", "worldnews", "finance2", "finance3"] },
+// 头部视频墙（React Bits DriftWall 形式）：14 支成片，1:1 方形磁贴，4 行横向漂移
+const HEAD_VIDEO_FILES = [
+  "worldnews",
+  "sep2",
+  "interview",
+  "finance2",
+  "outro",
+  "fengdu",
+  "politics",
+  "liveclip",
+  "qixue",
+  "tcm1",
+  "tcm2",
+  "flyco",
+  "finance1",
+  "finance3",
 ];
+
+const cacheBust = (file) => (file === "outro" ? "?v=3" : "");
+
+const WALL_VIDEOS = HEAD_VIDEO_FILES.map((file) => ({
+  id: file,
+  poster: `/videos/${file}.jpg${cacheBust(file)}`,
+  webm: `/videos/${file}.webm${cacheBust(file)}`,
+  mp4: `/videos/${file}.mp4${cacheBust(file)}`,
+}));
 
 const TITLE_SIZE = "clamp(2.4rem, 6.2vw, 6.9rem)";
 
@@ -60,44 +79,27 @@ export default function Hero() {
         />
       </div>
 
-      {/* 视频漂移墙：只在中部与右部，不可点击、不可拖动 */}
+      {/* 视频漂移墙：React Bits DriftWall 形式，4 行 1:1 方形视频，不可点击打开 */}
       <div className="video-canvas" aria-hidden="true">
-        <ChromaZone className="video-chroma" radius={420} idleOpacity={0.92}>
-          <div className="drift-wall">
-            {COLUMNS.map((col, ci) => (
-              <div
-                className="drift-col"
-                key={ci}
-                style={{
-                  "--dur": `${col.dur}s`,
-                  "--dir": col.reverse ? "reverse" : "normal",
-                }}
-              >
-                {[...col.tiles, ...col.tiles].map((file, i) => (
-                  <div className="drift-tile" key={`${file}-${i}`}>
-                    <video
-                      poster={`/videos/${file}.jpg${file === "outro" ? "?v=3" : ""}`}
-                      muted
-                      loop
-                      autoPlay
-                      playsInline
-                      preload="auto"
-                    >
-                      <source
-                        src={`/videos/${file}.webm${file === "outro" ? "?v=3" : ""}`}
-                        type="video/webm"
-                      />
-                      <source
-                        src={`/videos/${file}.mp4${file === "outro" ? "?v=3" : ""}`}
-                        type="video/mp4"
-                      />
-                    </video>
-                  </div>
-                ))}
-              </div>
-            ))}
-          </div>
-        </ChromaZone>
+        <DriftWall
+          items={WALL_VIDEOS}
+          rows={4}
+          columns={4}
+          gap={16}
+          radius={12}
+          tilt={9}
+          turn={-15}
+          perspective={1500}
+          depth={80}
+          speed={24}
+          variance={0.5}
+          parallax={0.6}
+          lift={70}
+          dim={0.9}
+          overlayColor="#07060c"
+          overlayOpacity={0.12}
+          maxTile={320}
+        />
       </div>
 
       <div className="hero-scan" aria-hidden="true" />
