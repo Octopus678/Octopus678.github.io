@@ -1397,50 +1397,7 @@
   background: rgba(5, 5, 5, 0.86);
 }
 
-/* ============ Circular gallery (React Bits 1:1) ============ */
-.gallery-section {
-  margin-top: clamp(72px, 8vw, 120px);
-  position: relative;
-}
-
-.gallery-headline {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: 10px;
-  margin-bottom: 8px;
-}
-
-.gallery-headline h3 {
-  font-size: clamp(1.6rem, 2.6vw, 2.4rem);
-  font-weight: 700;
-  letter-spacing: 0.01em;
-}
-
-.gallery-headline p {
-  font-size: 13px;
-  letter-spacing: 0.12em;
-  color: var(--muted);
-}
-
-.circular-gallery-wrap {
-  position: relative;
-  width: 100%;
-  height: clamp(440px, 46vw, 680px);
-}
-
-.circular-gallery-wrap::before {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 60%;
-  height: 60%;
-  background: radial-gradient(ellipse at center, rgba(255, 90, 54, 0.08), transparent 70%);
-  pointer-events: none;
-}
+/* ============ (个人生活照片区已移除) ============ */
 
 /* ============ Intro panel (godly 159 style) ============ */
 .intro-panel {

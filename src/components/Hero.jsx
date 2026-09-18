@@ -92,7 +92,7 @@ export default function Hero() {
               loop
               autoPlay
               playsInline
-              preload="metadata"
+              preload="auto"
             >
               <source src={`/videos/${t.file}.webm`} type="video/webm" />
               <source src={`/videos/${t.file}.mp4`} type="video/mp4" />

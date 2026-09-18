@@ -1,24 +1,10 @@
-import { useState } from "react";
-import Modal from "./Modal";
-import CircularGallery from "./CircularGallery/CircularGallery";
 import ProfileCard from "./ProfileCard/ProfileCard";
 
-const PHOTOS = Array.from({ length: 11 }, (_, i) => ({
-  src: `/photos/p${i + 1}.jpg`,
-  name: `现场 · 0${i + 1}`,
-}));
+const PORTRAIT = "/photos/p1.jpg";
 
 const INTRO_WORDS = ["节奏。", "叙事。", "留白。", "卡点。", "情绪。", "呼吸。", "克制。"];
 
 export default function About() {
-  const [index, setIndex] = useState(0);
-  const [modal, setModal] = useState(false);
-
-  const openModal = (i) => {
-    setIndex(i);
-    setModal(true);
-  };
-
   return (
     <section id="about" className="section section--soft">
       <div className="container">
@@ -48,12 +34,10 @@ export default function About() {
             <div className="intro-photo">
               <div className="profile-card-wrap">
                 <ProfileCard
-                  avatarUrl={PHOTOS[0].src}
+                  avatarUrl={PORTRAIT}
                   name="晋浩宇"
                   title="短视频剪辑 / 全流程内容创作者"
-                  handle="jinhaoyu"
-                  status="南京 · 随时可聊"
-                  contactText="联系我"
+                  showUserInfo={false}
                   behindGlowColor="rgba(255, 90, 54, 0.45)"
                   behindGlowSize="55%"
                   innerGradient="linear-gradient(145deg, #3a12108c 0%, #ff5a3644 100%)"
@@ -65,58 +49,7 @@ export default function About() {
             </div>
           </div>
         </div>
-
-        <div className="gallery-section reveal">
-          <div className="gallery-headline">
-            <span className="overline">Gallery / 现场照片</span>
-            <h3>镜头内外，都是我日常</h3>
-            <p>按住拖动 / 滚轮 / 方向键浏览 · 点击照片查看大图</p>
-          </div>
-          <div className="circular-gallery-wrap">
-            <CircularGallery
-              items={PHOTOS.map((p) => ({
-                image: p.src,
-                text: "",
-              }))}
-              bend={2.5}
-              textColor="#d98a5a"
-              borderRadius={0.06}
-              font="bold 26px 'Microsoft YaHei', 'PingFang SC', sans-serif"
-              scrollSpeed={1.8}
-              scrollEase={0.05}
-              onItemClick={openModal}
-            />
-          </div>
-        </div>
       </div>
-
-      <Modal open={modal} onClose={() => setModal(false)}>
-        <div className="photo-modal">
-          <img src={PHOTOS[index].src} alt={PHOTOS[index].name} />
-          <div className="photo-modal-meta">
-            <span className="latin">
-              {String(index + 1).padStart(2, "0")} / {PHOTOS.length}
-            </span>
-            <span>{PHOTOS[index].name}</span>
-          </div>
-          <button
-            type="button"
-            className="photo-prev"
-            aria-label="上一张"
-            onClick={() => setIndex((index - 1 + PHOTOS.length) % PHOTOS.length)}
-          >
-            ‹
-          </button>
-          <button
-            type="button"
-            className="photo-next"
-            aria-label="下一张"
-            onClick={() => setIndex((index + 1) % PHOTOS.length)}
-          >
-            ›
-          </button>
-        </div>
-      </Modal>
     </section>
   );
 }
