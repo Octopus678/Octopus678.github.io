@@ -332,7 +332,7 @@ function Band({
           </group>
         </RigidBody>
       </group>
-      <mesh ref={band}>
+      <mesh ref={band} frustumCulled={false}>
         <meshLineGeometry />
         <meshLineMaterial
           color="white"
