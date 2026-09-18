@@ -1,108 +1,68 @@
-import { useState } from "react";
-import Modal from "./Modal";
 import ChromaZone from "./ChromaZone/ChromaZone";
+import MorphSlider from "./MorphSlider/MorphSlider";
 
-const VIDEOS = [
-  { name: "访谈", file: "interview", tag: "人物 · 纪实" },
-  { name: "中医科普", file: "tcm1", tag: "科普 · 短视频" },
-  { name: "财经解读", file: "finance1", tag: "口播 · 短视频" },
-  { name: "丰都鬼城", file: "fengdu", tag: "文旅 · 短片" },
+const REELS = [
+  { file: "reel-interview", caption: "访谈 · 人物纪实" },
+  { file: "reel-tcm1", caption: "中医科普" },
+  { file: "reel-tcm2", caption: "中医科普 2" },
+  { file: "reel-finance1", caption: "财经解读 1" },
+  { file: "reel-finance2", caption: "财经解读 2" },
+  { file: "reel-finance3", caption: "财经解读 3" },
+  { file: "reel-fengdu", caption: "丰都鬼城 · 文旅短片" },
+  { file: "reel-worldnews", caption: "国际时政" },
+  { file: "reel-politics", caption: "时政解读" },
+  { file: "reel-qixue", caption: "气血离居" },
+  { file: "reel-liveclip", caption: "直播切片" },
+  { file: "reel-outro", caption: "结束宣传片" },
+  { file: "reel-flyco", caption: "飞科产品细节" },
+  { file: "reel-sep2", caption: "9 月 2 日 · 作品" },
 ];
 
 export default function Works() {
-  const [userPaused, setUserPaused] = useState(false);
-  const [hoverPaused, setHoverPaused] = useState(false);
-  const [active, setActive] = useState(null);
-  const spinning = !userPaused && !hoverPaused;
-
   return (
     <section id="works" className="section works">
       <div className="container">
         <div className="section-head reveal">
-          <span className="overline">02 / Selected Works — 精选作品</span>
+          <span className="overline">02 / Selected Works — 高光作品集</span>
           <h2 className="section-title">
-            最近剪过的<em>成片</em>
+            高光<em>作品集</em>
           </h2>
           <p className="section-note">
-            四支 9:16 竖屏成片组成旋转视频柱，在黑暗中持续转动。悬停暂停，点击画面在站内打开观看。
+            14 支成片以形变（morph）方式轮播。拖动或点箭头切换，
+            <strong>点击画面即可原地播放</strong>（带声音），再点一次暂停。
           </p>
         </div>
       </div>
 
-      <div className="prism-stage reveal">
-        <div className="prism-glow" aria-hidden="true" />
-        <ChromaZone className="prism-chroma" radius={300} idleOpacity={0.85}>
-          <div className={`prism ${spinning ? "" : "prism--paused"}`}>
-            {VIDEOS.map((v, i) => (
-              <button
-                type="button"
-                key={v.file}
-                className="prism-face"
-                style={{
-                  transform: `rotateY(${i * 90}deg) translateZ(200px)`,
-                }}
-                onClick={() => setActive(v)}
-                onMouseEnter={() => setHoverPaused(true)}
-                onMouseLeave={() => setHoverPaused(false)}
-                aria-label={`播放作品 ${v.name}`}
-              >
-                <video
-                  poster={`/videos/${v.file}.jpg`}
-                  muted
-                  loop
-                  playsInline
-                  autoPlay
-                  preload="metadata"
-                >
-                  <source src={`/videos/${v.file}.webm`} type="video/webm" />
-                  <source src={`/videos/${v.file}.mp4`} type="video/mp4" />
-                </video>
-                <span className="prism-face-tag latin">9:16 REEL</span>
-                <span className="prism-face-name">
-                  {v.name}
-                  <small>{v.tag}</small>
-                </span>
-                <span className="prism-face-play" aria-hidden="true">
-                  ▶
-                </span>
-              </button>
-            ))}
-          </div>
-        </ChromaZone>
-
-        <div className="prism-controls">
-          <button
-            type="button"
-            className={`prism-btn ${spinning ? "is-on" : ""}`}
-            onClick={() => setUserPaused((p) => !p)}
-          >
-            <span className="prism-btn-icon" aria-hidden="true">
-              {spinning ? "❚❚" : "▶"}
-            </span>
-            {spinning ? "暂停旋转" : "继续旋转"}
-          </button>
-          <span className="prism-hint">悬停画面可暂停 · 点击画面打开视频</span>
-        </div>
-      </div>
-
-      <Modal open={active !== null} onClose={() => setActive(null)} wide>
-        {active && (
-          <div className="video-modal">
-            <video
-              key={active.file}
-              src={`/videos/${active.file}.mp4`}
-              poster={`/videos/${active.file}.jpg`}
-              controls
-              autoPlay
-              playsInline
+      <div className="morph-stage reveal">
+        <div className="container morph-stage-inner">
+          <ChromaZone className="morph-chroma" radius={340} idleOpacity={0.9}>
+            <MorphSlider
+              items={REELS.map((r) => ({
+                image: `/videos/${r.file}.mp4`,
+                webm: `/videos/${r.file}.webm`,
+                caption: r.caption,
+                type: "video",
+              }))}
+              transition="melt"
+              duration={1.1}
+              intensity={1.05}
+              scale={2.6}
+              aberration={0.4}
+              drift={0.5}
+              autoplay
+              autoplayDelay={7}
+              loop
+              radius={16}
+              showCaptions
+              showControls
+              showIndicators
+              overlayColor="#08080a"
             />
-            <div className="video-modal-meta">
-              <span>{active.name}</span>
-              <span className="latin">{active.tag} · 9:16</span>
-            </div>
-          </div>
-        )}
-      </Modal>
+          </ChromaZone>
+        </div>
+        <p className="morph-hint">点击画面原地播放 / 暂停 · 拖动切换 · ← → 方向键换片</p>
+      </div>
     </section>
   );
 }

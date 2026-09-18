@@ -190,6 +190,37 @@
   pointer-events: auto;
 }
 
+/* ============ Morph slider stage (高光作品集) ============ */
+.morph-stage {
+  position: relative;
+  width: 100%;
+}
+
+.morph-stage-inner {
+  position: relative;
+  height: clamp(420px, 44vw, 700px);
+}
+
+.morph-stage-inner .morph-chroma {
+  position: absolute;
+  inset: 0;
+  border-radius: 18px;
+  overflow: hidden;
+  pointer-events: auto;
+}
+
+.morph-chroma .morph-slider-stage {
+  cursor: pointer;
+}
+
+.morph-hint {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  color: var(--faint);
+}
+
 .v-tile {
   position: absolute;
   border-radius: 12px;
