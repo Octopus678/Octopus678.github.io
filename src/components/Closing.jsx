@@ -132,7 +132,7 @@ export default function Closing() {
           <PillButton
             href="tel:+8613333443088"
             className="btn-primary"
-            ariaLabel="拨打电话 133 3344 3088"
+            ariaLabel="拨打电话或加微信 133 3344 3088（微信同号）"
             vars={{
               "--base": "#0a0b0d",
               "--pill-bg": "var(--accent)",
@@ -140,8 +140,11 @@ export default function Closing() {
               "--hover-text": "#f6f7f8"
             }}
           >
-            <span aria-hidden="true">☎</span>
+            <span className="icon" aria-hidden="true">
+              ☎
+            </span>
             <span className="latin">133 3344 3088</span>
+            <span className="tag">微信同号</span>
           </PillButton>
           <PillButton
             href="mailto:pidtiy@163.com"
@@ -162,7 +165,7 @@ export default function Closing() {
         </div>
 
         <div className="closing-chips reveal">
-          <span className="chip">抖音 @晋浩宇</span>
+          <span className="chip">抖音 @悲惨章鱼鸽</span>
           <span className="chip">小红书 内容账号</span>
           <span className="chip">视频号 个人号</span>
           <span className="chip">南京 · 可线下面聊</span>
