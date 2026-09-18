@@ -1,0 +1,250 @@
+/* ============ 开场加载页 ============ */
+.intro {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: #06070a;
+  overscroll-behavior: none;
+}
+
+.intro__frame {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: #06070a;
+  will-change: clip-path;
+}
+
+.intro__bg {
+  position: absolute;
+  inset: 0;
+}
+
+.intro__vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 66% 62% at 50% 52%, rgba(6, 7, 10, 0) 0%, rgba(6, 7, 10, 0.55) 100%),
+    linear-gradient(180deg, rgba(6, 7, 10, 0.38) 0%, rgba(6, 7, 10, 0) 40%, rgba(6, 7, 10, 0.5) 100%);
+}
+
+.intro__content {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  will-change: transform, opacity;
+}
+
+.intro__brand {
+  font-family: var(--font-latin);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: rgba(238, 241, 244, 0.58);
+  margin-bottom: clamp(8px, 2vh, 22px);
+}
+
+.intro__brand span {
+  color: var(--accent);
+}
+
+.intro__stage {
+  position: relative;
+  width: min(560px, 78vw);
+  height: clamp(280px, 36vh, 372px);
+  display: grid;
+  place-items: center;
+}
+
+.intro__hammer {
+  position: absolute;
+  inset: 0;
+  transition: opacity 0.55s ease, transform 0.55s ease;
+}
+
+.intro__hammer.is-off {
+  opacity: 0;
+  transform: scale(0.94);
+}
+
+/* 触感按钮（加载完成后取代锤子） */
+.intro__btn {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) scale(0.9);
+  opacity: 0;
+  pointer-events: none;
+  padding: clamp(16px, 2vh, 20px) clamp(40px, 5vw, 58px);
+  border: 1px solid rgba(255, 214, 196, 0.3);
+  border-radius: 18px;
+  font-family: var(--font-sans);
+  font-size: clamp(17px, 1.35vw, 21px);
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  color: #fff6f1;
+  background: linear-gradient(180deg, #ff7043 0%, #e8451f 100%);
+  box-shadow:
+    0 9px 0 0 #6d1c08,
+    0 22px 46px -16px rgba(255, 90, 54, 0.7),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  transition: transform 0.14s ease, box-shadow 0.14s ease, filter 0.2s ease, opacity 0.55s ease;
+  cursor: pointer;
+}
+
+.intro__btn.is-on {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+  pointer-events: auto;
+}
+
+.intro__btn.is-on:hover {
+  filter: brightness(1.06);
+  transform: translate(-50%, -50%) scale(1.02);
+}
+
+.intro__btn.is-on:active {
+  transform: translate(-50%, calc(-50% + 8px)) scale(0.995);
+  box-shadow:
+    0 1px 0 0 #6d1c08,
+    0 12px 22px -14px rgba(255, 90, 54, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+/* 锤子正下方的加载条：Uiverse「KSAplay/shy-rat-62」用法与配色改造版 */
+.intro__progress {
+  width: min(340px, 70vw);
+  margin-top: clamp(10px, 3vh, 28px);
+  transition: opacity 0.45s ease, transform 0.45s ease;
+}
+
+.intro__progress.is-hidden {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+.intro__progress .loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 7px;
+  width: 100%;
+}
+
+.intro__progress .loading-text {
+  display: flex;
+  align-items: baseline;
+  font-family: var(--font-latin);
+  font-size: 13pt;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  color: rgba(238, 241, 244, 0.86);
+}
+
+.intro__progress .dot {
+  margin-left: 3px;
+  animation: intro-dot-blink 1.5s infinite;
+}
+
+.intro__progress .dot:nth-child(2) {
+  animation-delay: 0.3s;
+}
+
+.intro__progress .dot:nth-child(3) {
+  animation-delay: 0.6s;
+}
+
+@keyframes intro-dot-blink {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.intro__pct {
+  margin-left: 14px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.intro__progress .loading-bar-background {
+  --height: 30px;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  padding: 5px;
+  width: 100%;
+  height: var(--height);
+  background-color: #16171b;
+  box-shadow:
+    inset -2px 2px 4px 0 rgba(0, 0, 0, 0.9),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+  border-radius: calc(var(--height) / 2);
+}
+
+.intro__progress .loading-bar {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  --height: 20px;
+  min-width: 20px;
+  height: var(--height);
+  overflow: hidden;
+  /* 主题色：由深橙到暖橙的渐变 */
+  background: linear-gradient(0deg, #e8451f 0%, #ff9a5c 100%);
+  box-shadow: 0 0 20px rgba(255, 90, 54, 0.45);
+  border-radius: calc(var(--height) / 2);
+  transition: width 0.3s ease-out;
+}
+
+.intro__progress .white-bars-container {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  animation: intro-bars-drift 2.6s linear infinite;
+}
+
+.intro__progress .white-bar {
+  width: 10px;
+  height: 45px;
+  opacity: 0.3;
+  rotate: 45deg;
+  background: linear-gradient(-45deg, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0) 70%);
+}
+
+@keyframes intro-bars-drift {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(28px);
+  }
+}
+
+body.intro-open {
+  overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  .intro__stage {
+    height: 260px;
+  }
+
+  .intro__progress {
+    width: 74vw;
+  }
+}

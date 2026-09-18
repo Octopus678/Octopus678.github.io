@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useReveal } from "./hooks/useReveal";
 import Nav from "./components/Nav";
 import Hero from "./components/Hero";
@@ -5,6 +6,7 @@ import About from "./components/About";
 import Works from "./components/Works";
 import Strengths from "./components/Strengths";
 import Closing from "./components/Closing";
+import Intro from "./components/Intro/Intro";
 import MoltenMetal from "./components/MoltenMetal/MoltenMetal";
 import "./index.css";
 import "./site.css";
@@ -32,6 +34,7 @@ const MOLTEN_PROPS = {
 
 export default function App() {
   useReveal();
+  const [introDone, setIntroDone] = useState(false);
 
   return (
     <>
@@ -43,14 +46,17 @@ export default function App() {
         <MoltenMetal {...MOLTEN_PROPS} />
       </div>
       <div className="grain" aria-hidden="true" />
-      <Nav />
-      <main>
-        <Hero />
-        <About />
-        <Works />
-        <Strengths />
-        <Closing />
-      </main>
+      <div className="site-root">
+        <Nav />
+        <main>
+          <Hero />
+          <About />
+          <Works />
+          <Strengths />
+          <Closing />
+        </main>
+      </div>
+      {introDone ? null : <Intro onDone={() => setIntroDone(true)} />}
     </>
   );
 }
