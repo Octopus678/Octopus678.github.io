@@ -2,20 +2,20 @@ import ChromaZone from "./ChromaZone/ChromaZone";
 import MorphSlider from "./MorphSlider/MorphSlider";
 
 const REELS = [
-  { file: "reel-interview", caption: "访谈 · 人物纪实" },
-  { file: "reel-tcm1", caption: "中医科普" },
-  { file: "reel-tcm2", caption: "中医科普 2" },
-  { file: "reel-finance1", caption: "财经解读 1" },
-  { file: "reel-finance2", caption: "财经解读 2" },
-  { file: "reel-finance3", caption: "财经解读 3" },
-  { file: "reel-fengdu", caption: "丰都鬼城 · 文旅短片" },
   { file: "reel-worldnews", caption: "国际时政" },
-  { file: "reel-politics", caption: "时政解读" },
-  { file: "reel-qixue", caption: "气血离居" },
-  { file: "reel-liveclip", caption: "直播切片" },
-  { file: "reel-outro", caption: "结束宣传片" },
-  { file: "reel-flyco", caption: "飞科产品细节" },
   { file: "reel-sep2", caption: "9 月 2 日 · 作品" },
+  { file: "reel-interview", caption: "访谈 · 人物纪实" },
+  { file: "reel-finance2", caption: "财经解读 2" },
+  { file: "reel-outro", caption: "结束宣传片" },
+  { file: "reel-fengdu", caption: "丰都鬼城 · 文旅短片" },
+  { file: "reel-politics", caption: "时政解读" },
+  { file: "reel-liveclip", caption: "直播切片" },
+  { file: "reel-qixue", caption: "气血离居" },
+  { file: "reel-tcm1", caption: "中医科普 1" },
+  { file: "reel-tcm2", caption: "中医科普 2" },
+  { file: "reel-flyco", caption: "飞科产品细节" },
+  { file: "reel-finance1", caption: "财经解读 1" },
+  { file: "reel-finance3", caption: "财经解读 3" },
 ];
 
 export default function Works() {

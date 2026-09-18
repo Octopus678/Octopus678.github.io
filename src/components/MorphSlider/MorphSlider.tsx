@@ -294,6 +294,8 @@ class MorphEngine {
   private videos: (HTMLVideoElement | null)[] = [];
   private pendingFrame: boolean[] = [];
   private loadTimers: number[] = [];
+  private loading: boolean[] = [];
+  private loaded: boolean[] = [];
   private resizeObserver: ResizeObserver;
   private raf = 0;
   private boundLoop: (t: number) => void;
@@ -365,22 +367,17 @@ class MorphEngine {
   }
 
   private loadTextures(): void {
-    // 懒加载：先加载当前与相邻两张，其余错峰加载，避免一次性抢占带宽
-    const total = this.items.length;
-    const priority = [
-      this.current,
-      this.wrap(this.current + 1),
-      this.wrap(this.current - 1),
-      ...this.items.map((_, i) => i).filter(i => i !== this.current && i !== this.wrap(this.current + 1) && i !== this.wrap(this.current - 1)),
-    ];
-    priority.forEach((index, pos) => {
-      if (index < 0 || index >= total) return;
-      if (pos < 3) {
-        this.loadItem(this.items[index], index);
-        return;
-      }
-      const timer = window.setTimeout(() => this.loadItem(this.items[index], index), (pos - 2) * 1200);
-      this.loadTimers.push(timer);
+    // 按需加载：仅当前帧与左右相邻，滑动到新的一帧时再加载其相邻帧
+    this.ensureAround(this.current);
+  }
+
+  private ensureAround(index: number): void {
+    if (!this.items.length) return;
+    const targets = [this.wrap(index), this.wrap(index + 1), this.wrap(index - 1)];
+    targets.forEach(i => {
+      if (this.loaded[i] || this.loading[i]) return;
+      this.loading[i] = true;
+      this.loadItem(this.items[i], i);
     });
   }
 
@@ -416,6 +413,7 @@ class MorphEngine {
           texture.image = video;
           this.textures[index] = texture;
           this.sizes[index] = [video.videoWidth || 16, video.videoHeight || 9];
+          this.loaded[index] = true;
           this.pendingFrame[index] = true;
           if (index === this.current) {
             this.program.uniforms.tCurrent.value = texture;
@@ -441,6 +439,7 @@ class MorphEngine {
         texture.image = img;
         this.textures[index] = texture;
         this.sizes[index] = [img.naturalWidth || 1, img.naturalHeight || 1];
+        this.loaded[index] = true;
         if (index === this.current) {
           this.program.uniforms.tCurrent.value = texture;
           this.program.uniforms.uCurrentSize.value = this.sizes[index];
@@ -531,8 +530,8 @@ class MorphEngine {
       const raw = this.current + dir;
       if (raw < 0 || raw > this.items.length - 1) return;
     }
-    // 目标帧尚未加载完成时先不切换，等纹理就绪
-    if (!this.textures[this.wrap(this.current + dir)]) return;
+    const nextIndex = this.wrap(this.current + dir);
+    if (!this.loaded[nextIndex]) this.ensureAround(nextIndex); // 立即开始加载该帧
     this.syncOptions();
     const target = this.prepareNext(dir);
     this.animating = true;
@@ -558,6 +557,7 @@ class MorphEngine {
 
   private commit(target: number): void {
     this.current = target;
+    this.ensureAround(target);
     this.pauseOthers();
     this.program.uniforms.tCurrent.value = this.textures[target];
     this.program.uniforms.uCurrentSize.value = this.sizes[target];
@@ -613,12 +613,7 @@ class MorphEngine {
     const p = this.program.uniforms.uProgress.value as number;
     if (this.dragDir === 0) return;
     const target = this.wrap(this.current + this.dragDir);
-    if (!this.textures[target]) {
-      // 目标帧未就绪：回滚
-      this.program.uniforms.uProgress.value = 0;
-      this.announce(this.current);
-      return;
-    }
+    if (!this.loaded[target]) this.ensureAround(target);
     const duration = this.reducedMotion ? 0.3 : 0.5;
     this.animating = true;
     if (p > 0.4) {
