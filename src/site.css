@@ -1489,6 +1489,37 @@
   object-position: center 30%;
 }
 
+/* 照片颜色还原：取消官方的人像抠图混合模式 */
+.profile-card-wrap .pc-avatar-content {
+  mix-blend-mode: normal;
+}
+
+/* 去掉覆盖整张卡片的紫色全息层，只保留局部跟随高光 */
+.profile-card-wrap .pc-shine,
+.profile-card-wrap .pc-shine::before,
+.profile-card-wrap .pc-shine::after {
+  display: none;
+}
+
+/* 鼠标跟随的小范围高光（范围约为原来的 1/2，亮度更低） */
+.profile-card-wrap .pc-glare {
+  background-image: radial-gradient(
+    circle at var(--pointer-x) var(--pointer-y),
+    rgba(255, 255, 255, 0.26) 0%,
+    rgba(255, 255, 255, 0.1) 10%,
+    transparent 22%
+  );
+  mix-blend-mode: soft-light;
+  filter: none;
+  opacity: calc(0.35 + 0.4 * var(--pointer-from-center));
+  transition: opacity 220ms ease;
+}
+
+.profile-card-wrap .pc-card:hover .pc-glare,
+.profile-card-wrap .pc-card.active .pc-glare {
+  opacity: calc(0.5 + 0.4 * var(--pointer-from-center));
+}
+
 @media (max-width: 1024px) {
   .intro-grid {
     grid-template-columns: minmax(280px, 360px);
