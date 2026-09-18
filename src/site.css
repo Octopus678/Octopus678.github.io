@@ -1477,7 +1477,7 @@
 }
 
 .profile-card-wrap {
-  width: 400px;
+  width: fit-content;
 }
 
 .profile-card-wrap .pc-card {
@@ -1485,8 +1485,13 @@
   max-height: none;
 }
 
-.profile-card-wrap .pc-user-info {
-  background: linear-gradient(150deg, rgba(12, 12, 16, 0.82), rgba(20, 18, 26, 0.62));
+/* 让照片铺满卡槽内部（官方组件默认按人像抠图底部对齐，这里是实拍照片，改为 cover 填充） */
+.profile-card-wrap .pc-avatar-content .avatar {
+  height: 100%;
+  top: 0;
+  bottom: 0;
+  object-fit: cover;
+  object-position: center 30%;
 }
 
 @media (max-width: 1024px) {
@@ -1495,7 +1500,7 @@
     gap: 0;
   }
   .profile-card-wrap {
-    width: min(360px, 84vw);
+    width: fit-content;
   }
   .profile-card-wrap .pc-card {
     height: 500px;
