@@ -27,7 +27,7 @@ const MOLTEN_PROPS = {
   grainIntensity: 0.06,
   mouseInteraction: true,
   mouseStrength: 0.25,
-  opacity: 0.5,
+  opacity: 0.34,
 };
 
 export default function App() {
@@ -35,6 +35,10 @@ export default function App() {
 
   return (
     <>
+      <div className="site-bg" aria-hidden="true">
+        <img src="/bg.jpg" alt="" />
+        <span className="site-bg-shade" />
+      </div>
       <div className="molten-bg-fixed" aria-hidden="true">
         <MoltenMetal {...MOLTEN_PROPS} />
       </div>

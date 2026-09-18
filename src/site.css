@@ -143,6 +143,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  filter: blur(1.5px) saturate(1.1);
   animation: kenburns 36s ease-in-out infinite alternate;
 }
 
@@ -1186,7 +1187,7 @@
 /* ============ Strengths ============ */
 .strength-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: clamp(18px, 2vw, 28px);
 }
 
@@ -1460,6 +1461,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  filter: blur(1.5px) saturate(1.1);
   animation: kenburns 40s ease-in-out infinite alternate;
   opacity: 0.5;
 }
@@ -1480,6 +1482,31 @@
 }
 
 /* ============ Molten metal background layers ============ */
+/* 全站背景图（红/蓝/紫抽象线条，黑底）——原图 736×1472，用轻微模糊隐藏放大噪点 */
+.site-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.site-bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.08);
+  filter: blur(2.5px) saturate(1.5) brightness(1.25);
+}
+
+.site-bg-shade {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 85% 65% at 50% 40%, rgba(8, 7, 9, 0.1) 0%, rgba(8, 7, 9, 0.6) 100%),
+    linear-gradient(180deg, rgba(8, 7, 9, 0.45) 0%, rgba(8, 7, 9, 0.25) 45%, rgba(8, 7, 9, 0.6) 100%);
+}
+
 .molten-bg-fixed {
   position: fixed;
   inset: 0;
@@ -1505,11 +1532,11 @@
 
 /* 让固定熔岩层在中间区块透出 */
 .section--soft {
-  background: rgba(14, 16, 19, 0.88);
+  background: rgba(14, 16, 19, 0.72);
 }
 
 .works {
-  background: rgba(5, 5, 5, 0.86);
+  background: rgba(5, 5, 5, 0.74);
 }
 
 /* ============ (个人生活照片区已移除) ============ */
