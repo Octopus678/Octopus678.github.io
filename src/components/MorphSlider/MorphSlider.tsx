@@ -396,17 +396,17 @@ class MorphEngine {
         video.preload = 'auto';
         video.crossOrigin = 'anonymous';
         video.setAttribute('muted', '');
-        // mp4 优先，webm 兜底；挂到容器（隐藏）以确保可靠加载
-        const mp4 = document.createElement('source');
-        mp4.src = item.image;
-        mp4.type = 'video/mp4';
-        video.appendChild(mp4);
+        // 优先 webm（体积小、兼容性好），mp4 兜底；挂到容器（隐藏）以确保可靠加载
         if (item.webm) {
           const webm = document.createElement('source');
           webm.src = item.webm;
           webm.type = 'video/webm';
           video.appendChild(webm);
         }
+        const mp4 = document.createElement('source');
+        mp4.src = item.image;
+        mp4.type = 'video/mp4';
+        video.appendChild(mp4);
         video.style.cssText =
           'position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;left:-10px;top:-10px;';
         this.container.appendChild(video);
