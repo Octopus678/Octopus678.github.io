@@ -17,6 +17,9 @@ const REELS = [
   { file: "reel-finance3", caption: "财经解读 3" },
 ];
 
+// 资源版本号：文件更新后用它强制刷新浏览器/CDN 缓存
+const V = "?v=3";
+
 export default function Works() {
   return (
     <section id="works" className="section works">
@@ -37,9 +40,9 @@ export default function Works() {
         <div className="container morph-stage-inner">
           <MorphSlider
             items={REELS.map((r) => ({
-              image: `/videos/${r.file}.mp4`,
-              webm: `/videos/${r.file}.webm`,
-              poster: `/videos/${r.file}.jpg`,
+              image: `/videos/${r.file}.mp4${V}`,
+              webm: `/videos/${r.file}.webm${V}`,
+              poster: `/videos/${r.file}.jpg${V}`,
               caption: r.caption,
               type: "video",
             }))}

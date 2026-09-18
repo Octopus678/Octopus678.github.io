@@ -274,6 +274,7 @@ interface EngineConfig {
   getOptions: () => EngineOptions;
   onIndexChange: (index: number) => void;
   onAspectChange?: (ratio: number) => void;
+  onPlayStateChange?: (playing: boolean) => void;
   dprCap: number;
 }
 
@@ -283,6 +284,7 @@ class MorphEngine {
   private getOptions: () => EngineOptions;
   private onIndexChange: (index: number) => void;
   private onAspectChange?: (ratio: number) => void;
+  private onPlayStateChange?: (playing: boolean) => void;
   private reducedMotion: boolean;
 
   private current: number;
@@ -316,6 +318,7 @@ class MorphEngine {
     this.getOptions = config.getOptions;
     this.onIndexChange = config.onIndexChange;
     this.onAspectChange = config.onAspectChange;
+    this.onPlayStateChange = config.onPlayStateChange;
     this.reducedMotion = config.reducedMotion;
     this.current = config.startIndex;
     this.shownIndex = config.startIndex;
@@ -377,8 +380,12 @@ class MorphEngine {
   }
 
   private loadTextures(): void {
-    // 按需加载：仅当前帧与左右相邻，滑动到新的一帧时再加载其相邻帧
-    this.ensureAround(this.current);
+    // 进站即全部加载（配合小体积文件，避免滑动时等待）
+    this.items.forEach((item, index) => {
+      if (this.loaded[index] || this.loading[index]) return;
+      this.loading[index] = true;
+      this.loadItem(item, index);
+    });
   }
 
   private ensureAround(index: number): void {
@@ -389,6 +396,18 @@ class MorphEngine {
       this.loading[i] = true;
       this.loadItem(this.items[i], i);
     });
+    // 仅当前帧开始缓冲视频数据（相邻帧先显示封面，不抢占带宽）
+    this.ensureVideoData(this.wrap(index));
+  }
+
+  /** 开始下载当前帧的视频数据（封面已就位，不阻塞画面） */
+  private ensureVideoData(index: number): void {
+    const video = this.videos[index];
+    if (!video || video.preload === 'auto') return;
+    video.preload = 'auto';
+    try {
+      video.load();
+    } catch {}
   }
 
   private loadItem(item: MorphItem, index: number): void {
@@ -400,7 +419,7 @@ class MorphEngine {
         video.loop = true;
         video.playsInline = true;
         video.autoplay = false;
-        video.preload = 'auto';
+        video.preload = 'auto'; // 进站即加载，保证点击即可播放
         video.crossOrigin = 'anonymous';
         video.setAttribute('muted', '');
         // 优先 webm（体积小、兼容性好），mp4 兜底；挂到容器（隐藏）以确保可靠加载
@@ -492,6 +511,7 @@ class MorphEngine {
       video.pause();
     }
     this.pendingFrame[this.current] = true;
+    this.onPlayStateChange?.(!video.paused);
     return true;
   }
 
@@ -542,9 +562,14 @@ class MorphEngine {
   }
 
   private pauseOthers(): void {
+    let pausedAny = false;
     this.videos.forEach((video, i) => {
-      if (video && i !== this.current && !video.paused) video.pause();
+      if (video && i !== this.current && !video.paused) {
+        video.pause();
+        pausedAny = true;
+      }
     });
+    if (pausedAny) this.onPlayStateChange?.(false);
   }
 
   private resize(): void {
@@ -770,6 +795,7 @@ export default function MorphSlider({
   const [aspect, setAspect] = useState(0.5625);
   const [progress, setProgress] = useState(0);
   const [isSeeking, setIsSeeking] = useState(false);
+  const [playing, setPlaying] = useState(false);
   const isSeekingRef = useRef(false);
 
   const optsRef = useRef<EngineOptions>({
@@ -796,7 +822,8 @@ export default function MorphSlider({
       dprCap: 2,
       getOptions: () => optsRef.current,
       onIndexChange: setIndex,
-      onAspectChange: setAspect
+      onAspectChange: setAspect,
+      onPlayStateChange: setPlaying
     });
     engineRef.current = engine;
     setIndex(startIndex);
@@ -812,10 +839,10 @@ export default function MorphSlider({
   const handlePrev = useCallback(() => engineRef.current?.prev(), []);
 
   useEffect(() => {
-    if (!autoplay || hovering) return undefined;
+    if (!autoplay || hovering || playing) return undefined; // 视频播放中不自动切换
     const id = window.setTimeout(() => engineRef.current?.next(), Math.max(autoplayDelay, 1) * 1000);
     return () => window.clearTimeout(id);
-  }, [autoplay, autoplayDelay, hovering, index]);
+  }, [autoplay, autoplayDelay, hovering, playing, index]);
 
   useEffect(() => {
     const el = containerRef.current;
