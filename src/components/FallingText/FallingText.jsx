@@ -13,7 +13,8 @@ const FallingText = ({
   gravity = 1,
   mouseConstraintStiffness = 0.2,
   fontSize = '1rem',
-  lineHeight = 1.4
+  lineHeight = 1.4,
+  interactive = true
 }) => {
   const containerRef = useRef(null);
   const textRef = useRef(null);
@@ -118,17 +119,27 @@ const FallingText = ({
       elem.style.transform = 'none';
     });
 
-    const mouse = Mouse.create(containerRef.current);
-    const mouseConstraint = MouseConstraint.create(engine, {
-      mouse,
-      constraint: {
-        stiffness: mouseConstraintStiffness,
-        render: { visible: false }
-      }
-    });
-    render.mouse = mouse;
+    let mouseConstraint = null;
+    if (interactive) {
+      const mouse = Mouse.create(containerRef.current);
+      mouseConstraint = MouseConstraint.create(engine, {
+        mouse,
+        constraint: {
+          stiffness: mouseConstraintStiffness,
+          render: { visible: false }
+        }
+      });
+      render.mouse = mouse;
+    }
 
-    World.add(engine.world, [floor, leftWall, rightWall, ceiling, mouseConstraint, ...wordBodies.map(wb => wb.body)]);
+    World.add(engine.world, [
+      floor,
+      leftWall,
+      rightWall,
+      ceiling,
+      ...(mouseConstraint ? [mouseConstraint] : []),
+      ...wordBodies.map(wb => wb.body)
+    ]);
 
     const runner = Runner.create();
     Runner.run(runner, engine);
@@ -158,7 +169,7 @@ const FallingText = ({
       World.clear(engine.world);
       Engine.clear(engine);
     };
-  }, [effectStarted, gravity, wireframes, backgroundColor, mouseConstraintStiffness]);
+  }, [effectStarted, gravity, wireframes, backgroundColor, mouseConstraintStiffness, interactive]);
 
   const handleTrigger = () => {
     if (!effectStarted && (trigger === 'click' || trigger === 'hover')) {

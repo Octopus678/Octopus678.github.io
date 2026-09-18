@@ -1332,25 +1332,22 @@
   inset: 0;
 }
 
-/* 尾页关键词落体：React Bits FallingText（满幅、大字号、无边框纯文字） */
+/* 尾页关键词落体：React Bits FallingText
+   与标题同栏、位于标题层下方；字号与「我能为你搞定什么」一致；纯视觉，不可点击 */
 .closing-falling {
   position: relative;
   z-index: 1;
   width: 100%;
-  margin-top: clamp(30px, 5vh, 70px);
-  height: clamp(560px, 86vh, 1020px);
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.016), rgba(255, 255, 255, 0));
+  height: clamp(320px, 36vh, 430px);
+  margin: 24px auto 0;
+  overflow: hidden;
+  pointer-events: none;
 }
 
 .closing-falling .falling-text-container {
-  padding-top: 0.4em;
-  cursor: grab;
-}
-
-.closing-falling .falling-text-container:active {
-  cursor: grabbing;
+  padding-top: 0.6em;
+  cursor: default;
+  pointer-events: none;
 }
 
 .closing-falling .falling-text-target {

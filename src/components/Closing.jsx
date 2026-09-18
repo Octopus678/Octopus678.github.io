@@ -108,6 +108,21 @@ export default function Closing() {
         <h2 className="closing-title reveal">
           有片子，<em>随时聊</em>
         </h2>
+
+        {/* 关键词落体：与标题同栏、位于标题层下方，仅作视觉，不可点击 */}
+        <div className="closing-falling">
+          <FallingText
+            text={FALLING_WORDS}
+            highlightWords={["剪辑", "审美", "成片"]}
+            highlightClass="ft-accent"
+            trigger="scroll"
+            gravity={0.9}
+            fontSize="clamp(2.2rem, 4vw, 4.2rem)"
+            lineHeight={1.2}
+            interactive={false}
+          />
+        </div>
+
         <p className="closing-sub reveal">
           无论是月度内容合作、单条视频代剪，还是成片交付，都可以先聊聊需求。
         </p>
@@ -132,20 +147,6 @@ export default function Closing() {
           <span className="chip">南京 · 可线下面聊</span>
         </div>
 
-      </div>
-
-      {/* 关键词落体：滑到本栏后随机掉落并堆叠，可鼠标拖动 */}
-      <div className="closing-falling">
-        <FallingText
-          text={FALLING_WORDS}
-          highlightWords={["剪辑", "审美", "成片"]}
-          highlightClass="ft-accent"
-          trigger="scroll"
-          gravity={0.9}
-          mouseConstraintStiffness={0.25}
-          fontSize="clamp(2.6rem, 6.9vw, 8.4rem)"
-          lineHeight={1.2}
-        />
       </div>
 
       <footer className="closing-footer">
