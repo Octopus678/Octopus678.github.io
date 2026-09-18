@@ -1,4 +1,3 @@
-import ChromaZone from "./ChromaZone/ChromaZone";
 import MorphSlider from "./MorphSlider/MorphSlider";
 
 const REELS = [
@@ -36,31 +35,29 @@ export default function Works() {
 
       <div className="morph-stage reveal">
         <div className="container morph-stage-inner">
-          <ChromaZone className="morph-chroma" radius={340} idleOpacity={0.9}>
-            <MorphSlider
-              items={REELS.map((r) => ({
-                image: `/videos/${r.file}.mp4`,
-                webm: `/videos/${r.file}.webm`,
-                poster: `/videos/${r.file}.jpg`,
-                caption: r.caption,
-                type: "video",
-              }))}
-              transition="melt"
-              duration={1.1}
-              intensity={1.05}
-              scale={2.6}
-              aberration={0.4}
-              drift={0.5}
-              autoplay
-              autoplayDelay={7}
-              loop
-              radius={16}
-              showCaptions
-              showControls
-              showIndicators
-              overlayColor="#08080a"
-            />
-          </ChromaZone>
+          <MorphSlider
+            items={REELS.map((r) => ({
+              image: `/videos/${r.file}.mp4`,
+              webm: `/videos/${r.file}.webm`,
+              poster: `/videos/${r.file}.jpg`,
+              caption: r.caption,
+              type: "video",
+            }))}
+            transition="melt"
+            duration={1.1}
+            intensity={1.05}
+            scale={2.6}
+            aberration={0.4}
+            drift={0.5}
+            autoplay
+            autoplayDelay={7}
+            loop
+            radius={16}
+            showCaptions
+            showControls
+            showIndicators
+            overlayColor="#08080a"
+          />
         </div>
         <p className="morph-hint">点击画面原地播放 / 暂停 · 拖动切换 · ← → 方向键换片</p>
       </div>

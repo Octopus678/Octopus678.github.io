@@ -201,15 +201,14 @@
   height: clamp(420px, 44vw, 700px);
 }
 
-.morph-stage-inner .morph-chroma {
+.morph-stage-inner .morph-slider {
   position: absolute;
   inset: 0;
   border-radius: 18px;
   overflow: hidden;
-  pointer-events: auto;
 }
 
-.morph-chroma .morph-slider-stage {
+.morph-stage-inner .morph-slider-stage {
   cursor: pointer;
 }
 
