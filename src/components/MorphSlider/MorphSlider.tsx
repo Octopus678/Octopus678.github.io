@@ -293,6 +293,7 @@ class MorphEngine {
   private sizes: [number, number][];
   private videos: (HTMLVideoElement | null)[] = [];
   private pendingFrame: boolean[] = [];
+  private loadTimers: number[] = [];
   private resizeObserver: ResizeObserver;
   private raf = 0;
   private boundLoop: (t: number) => void;
@@ -364,7 +365,27 @@ class MorphEngine {
   }
 
   private loadTextures(): void {
-    this.items.forEach((item, index) => {
+    // 懒加载：先加载当前与相邻两张，其余错峰加载，避免一次性抢占带宽
+    const total = this.items.length;
+    const priority = [
+      this.current,
+      this.wrap(this.current + 1),
+      this.wrap(this.current - 1),
+      ...this.items.map((_, i) => i).filter(i => i !== this.current && i !== this.wrap(this.current + 1) && i !== this.wrap(this.current - 1)),
+    ];
+    priority.forEach((index, pos) => {
+      if (index < 0 || index >= total) return;
+      if (pos < 3) {
+        this.loadItem(this.items[index], index);
+        return;
+      }
+      const timer = window.setTimeout(() => this.loadItem(this.items[index], index), (pos - 2) * 1200);
+      this.loadTimers.push(timer);
+    });
+  }
+
+  private loadItem(item: MorphItem, index: number): void {
+    {
       const isVideo = item.type === 'video' || /\.(mp4|webm|ogv|mov)(\?.*)?$/i.test(item.image);
       if (isVideo) {
         const video = document.createElement('video');
@@ -426,7 +447,7 @@ class MorphEngine {
         }
       };
       img.onerror = () => {};
-    });
+    }
   }
 
   /** 点击画面：原地播放/暂停当前视频（不放大、不跳转） */
@@ -510,6 +531,8 @@ class MorphEngine {
       const raw = this.current + dir;
       if (raw < 0 || raw > this.items.length - 1) return;
     }
+    // 目标帧尚未加载完成时先不切换，等纹理就绪
+    if (!this.textures[this.wrap(this.current + dir)]) return;
     this.syncOptions();
     const target = this.prepareNext(dir);
     this.animating = true;
@@ -590,6 +613,12 @@ class MorphEngine {
     const p = this.program.uniforms.uProgress.value as number;
     if (this.dragDir === 0) return;
     const target = this.wrap(this.current + this.dragDir);
+    if (!this.textures[target]) {
+      // 目标帧未就绪：回滚
+      this.program.uniforms.uProgress.value = 0;
+      this.announce(this.current);
+      return;
+    }
     const duration = this.reducedMotion ? 0.3 : 0.5;
     this.animating = true;
     if (p > 0.4) {
@@ -622,6 +651,8 @@ class MorphEngine {
   destroy(): void {
     cancelAnimationFrame(this.raf);
     if (this.tween) this.tween.kill();
+    this.loadTimers.forEach(t => window.clearTimeout(t));
+    this.loadTimers = [];
     this.videos.forEach(video => {
       if (!video) return;
       video.pause();
