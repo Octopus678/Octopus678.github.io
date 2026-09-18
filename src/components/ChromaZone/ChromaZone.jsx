@@ -6,8 +6,8 @@ import "./ChromaZone.css";
 
 // 内联注入滤镜，避免构建工具压缩时丢失 backdrop-filter
 const CHROMA_FILTER = {
-  backdropFilter: "grayscale(1) brightness(0.78)",
-  WebkitBackdropFilter: "grayscale(1) brightness(0.78)",
+  backdropFilter: "grayscale(0.85) brightness(0.96)",
+  WebkitBackdropFilter: "grayscale(0.85) brightness(0.96)",
 };
 
 export default function ChromaZone({

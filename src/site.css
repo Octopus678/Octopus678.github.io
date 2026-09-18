@@ -152,9 +152,8 @@
   inset: 0;
   z-index: 3;
   background:
-    linear-gradient(100deg, rgba(8, 7, 9, 0.92) 0%, rgba(8, 7, 9, 0.78) 26%, rgba(8, 7, 9, 0.2) 52%, rgba(8, 7, 9, 0.08) 74%, rgba(8, 7, 9, 0.35) 100%),
-    radial-gradient(ellipse 62% 60% at 30% 46%, rgba(8, 7, 9, 0.55) 0%, transparent 72%),
-    linear-gradient(180deg, rgba(8, 7, 9, 0.45) 0%, transparent 26%, rgba(8, 7, 9, 0.72) 100%);
+    linear-gradient(100deg, rgba(8, 7, 9, 0.42) 0%, rgba(8, 7, 9, 0.26) 30%, transparent 58%, rgba(8, 7, 9, 0.14) 100%),
+    linear-gradient(180deg, transparent 0%, transparent 64%, rgba(8, 7, 9, 0.34) 100%);
   pointer-events: none;
 }
 
@@ -886,9 +885,11 @@
 
 .contact-card {
   padding: 38px;
-  border: 1px solid var(--line);
-  border-radius: 4px;
-  background: var(--surface);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  background: linear-gradient(150deg, rgba(28, 30, 36, 0.32), rgba(12, 13, 16, 0.26));
+  backdrop-filter: blur(14px) saturate(1.25);
+  -webkit-backdrop-filter: blur(14px) saturate(1.25);
   position: relative;
   overflow: hidden;
 }
@@ -1194,16 +1195,19 @@
 .strength-card {
   position: relative;
   padding: clamp(30px, 3vw, 44px);
-  border: 1px solid var(--line);
-  border-radius: 4px;
-  background: var(--surface);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  /* 黑玻璃质感：半透明 + 背景模糊，露出全站主背景 */
+  background: linear-gradient(150deg, rgba(28, 30, 36, 0.34), rgba(12, 13, 16, 0.28));
+  backdrop-filter: blur(14px) saturate(1.25);
+  -webkit-backdrop-filter: blur(14px) saturate(1.25);
   overflow: hidden;
   transition: border-color 0.4s ease, transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), background 0.4s ease;
 }
 
 .strength-card:hover {
   border-color: rgba(255, 90, 54, 0.42);
-  background: var(--surface-2);
+  background: linear-gradient(150deg, rgba(38, 40, 48, 0.44), rgba(16, 17, 21, 0.36));
   transform: translateY(-5px);
 }
 
@@ -1283,9 +1287,8 @@
   justify-content: space-between;
   position: relative;
   overflow: hidden;
-  background:
-    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(255, 90, 54, 0.07), transparent 65%),
-    var(--bg-soft);
+  /* 尾页不再有黑色底，主背景图直接可见 */
+  background: transparent;
 }
 
 .closing::before {
@@ -1450,30 +1453,10 @@
 }
 
 /* ============ Closing background ============ */
-.closing-bg {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  z-index: 0;
-}
-
-.closing-bg img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  filter: blur(1.5px) saturate(1.1);
-  animation: kenburns 40s ease-in-out infinite alternate;
-  opacity: 0.5;
-}
-
+/* 尾页不再叠加自己的背景与黑色遮罩，直接透出全站主背景 */
+.closing-bg,
 .closing-shade {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  background:
-    radial-gradient(ellipse 80% 60% at 50% 30%, transparent 20%, rgba(8, 7, 9, 0.8) 100%),
-    linear-gradient(180deg, rgba(8, 7, 9, 0.9) 0%, rgba(8, 7, 9, 0.6) 50%, rgba(8, 7, 9, 0.95) 100%);
-  pointer-events: none;
+  display: none;
 }
 
 .closing-main,
@@ -1532,11 +1515,11 @@
 
 /* 让固定熔岩层在中间区块透出 */
 .section--soft {
-  background: rgba(14, 16, 19, 0.72);
+  background: transparent;
 }
 
 .works {
-  background: rgba(5, 5, 5, 0.74);
+  background: transparent;
 }
 
 /* ============ (个人生活照片区已移除) ============ */
@@ -1847,7 +1830,7 @@
 /* ============ Prism video showcase (X post style: dark scene + rotating 3D form) ============ */
 .works {
   overflow: hidden;
-  background: #050505;
+  background: transparent;
 }
 
 .prism-stage {
