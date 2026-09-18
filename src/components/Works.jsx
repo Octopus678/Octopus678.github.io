@@ -41,6 +41,7 @@ export default function Works() {
               items={REELS.map((r) => ({
                 image: `/videos/${r.file}.mp4`,
                 webm: `/videos/${r.file}.webm`,
+                poster: `/videos/${r.file}.jpg`,
                 caption: r.caption,
                 type: "video",
               }))}

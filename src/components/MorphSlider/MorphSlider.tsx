@@ -14,6 +14,8 @@ export interface MorphItem {
   type?: 'image' | 'video';
   /** 可选：WebM 兜底源（浏览器不支持 mp4 时使用） */
   webm?: string;
+  /** 可选：首帧封面（视频加载前先显示，避免空白） */
+  poster?: string;
 }
 
 export interface MorphSliderProps {
@@ -408,6 +410,25 @@ class MorphEngine {
           'position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;left:-10px;top:-10px;';
         this.container.appendChild(video);
         this.videos[index] = video;
+        // 先用封面图占位，视频就绪后再替换为视频纹理
+        if (item.poster) {
+          const poster = new Image();
+          poster.crossOrigin = 'anonymous';
+          poster.src = item.poster;
+          poster.onload = () => {
+            if (this.loaded[index]) return; // 视频已就绪则不再覆盖
+            const texture = new Texture(this.gl, { generateMipmaps: false });
+            texture.image = poster;
+            this.textures[index] = texture;
+            this.sizes[index] = [poster.naturalWidth || 720, poster.naturalHeight || 1280];
+            this.loaded[index] = true;
+            this.pendingFrame[index] = true;
+            if (index === this.current) {
+              this.program.uniforms.tCurrent.value = texture;
+              this.program.uniforms.uCurrentSize.value = this.sizes[index];
+            }
+          };
+        }
         const onReady = () => {
           const texture = new Texture(this.gl, { generateMipmaps: false });
           texture.image = video;
