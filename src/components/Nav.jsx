@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
+import PillNav from "./PillNav/PillNav";
 
-const LINKS = [
+// 首个条目同时作为 logo 的跳转目标（React Bits PillNav 的约定）
+const ITEMS = [
+  { href: "#top", label: "首页" },
   { href: "#about", label: "关于" },
   { href: "#works", label: "作品" },
   { href: "#strengths", label: "优势" },
@@ -8,22 +11,14 @@ const LINKS = [
 ];
 
 export default function Nav() {
-  const [scrolled, setScrolled] = useState(false);
-  const [active, setActive] = useState("");
+  const [active, setActive] = useState("#top");
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 30);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  useEffect(() => {
-    const ids = LINKS.map((l) => l.href.slice(1));
+    const ids = ITEMS.map((l) => l.href.slice(1));
     const io = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting) setActive(entry.target.id);
+          if (entry.isIntersecting) setActive(`#${entry.target.id}`);
         });
       },
       { rootMargin: "-40% 0px -55% 0px" }
@@ -36,28 +31,18 @@ export default function Nav() {
   }, []);
 
   return (
-    <header className={`nav ${scrolled ? "scrolled" : ""}`}>
-      <div className="container nav-inner">
-        <a href="#top" className="nav-logo">
-          <span className="dot" aria-hidden="true" />
-          JIN&nbsp;HAOYU
-          <small>剪辑工作室</small>
-        </a>
-        <nav>
-          <ul className="nav-links">
-            {LINKS.map((l) => (
-              <li key={l.href}>
-                <a href={l.href} className={active === l.href.slice(1) ? "active" : ""}>
-                  {l.label}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </nav>
-        <a href="#contact" className="nav-cta latin">
-          联系我
-        </a>
-      </div>
-    </header>
+    <div className="nav-shell">
+      <PillNav
+        logo="/logo.svg"
+        logoAlt="晋浩宇 · 短视频剪辑"
+        items={ITEMS}
+        activeHref={active}
+        baseColor="#0f1013"
+        pillColor="rgba(255, 255, 255, 0.07)"
+        pillTextColor="#eef1f4"
+        hoveredPillTextColor="#0a0b0d"
+        initialLoadAnimation
+      />
+    </div>
   );
 }
