@@ -364,6 +364,40 @@
   letter-spacing: 0.005em;
 }
 
+/* Depth Text 版大标题 */
+.hero-title--depth {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1em;
+  font-size: inherit;
+}
+
+.hero-title--depth .depth-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.1em;
+  animation: depth-row-in 1s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: var(--rd, 0ms);
+}
+
+/* 中文字距微调（官方默认 -0.065em 是给拉丁字母的） */
+.hero-title--depth .depth-text__layer,
+.hero-title--depth .depth-text__face {
+  letter-spacing: -0.015em;
+  line-height: 1;
+}
+
+@keyframes depth-row-in {
+  from {
+    opacity: 0;
+    transform: translateY(26px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 .hero-title .row {
   display: block;
   overflow: hidden;

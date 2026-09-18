@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import MoltenMetal from "./MoltenMetal/MoltenMetal";
 import ChromaZone from "./ChromaZone/ChromaZone";
+import DepthText from "./DepthText/DepthText";
 
 const MARQUEE_WORDS = [
   "抖音",
@@ -118,15 +119,66 @@ export default function Hero() {
           <span>NANJING · CN</span>
         </div>
 
-        <h1 className="hero-title">
-          <span className="row">
-            <span style={{ "--rd": "120ms" }}>剪辑，是</span>
+        <h1 className="hero-title hero-title--depth">
+          <span className="depth-row" style={{ "--rd": "120ms" }}>
+            <DepthText
+              text="剪辑，是"
+              layers={26}
+              depth={2.6}
+              tilt={9}
+              smoothing={0.12}
+              autoOrbit
+              orbitSpeed={0.26}
+              fontSize="clamp(2.4rem, 6.2vw, 6.9rem)"
+              fontWeight={900}
+              faceColor="#eef1f4"
+              depthColor="#ff5a36"
+              shadow
+            />
           </span>
-          <span className="row">
-            <span style={{ "--rd": "260ms" }}>
-              一种<span className="accent">叙事</span>
-              <span className="outline">。</span>
-            </span>
+          <span className="depth-row" style={{ "--rd": "260ms" }}>
+            <DepthText
+              text="一种"
+              layers={26}
+              depth={2.6}
+              tilt={9}
+              smoothing={0.12}
+              autoOrbit
+              orbitSpeed={0.26}
+              fontSize="clamp(2.4rem, 6.2vw, 6.9rem)"
+              fontWeight={900}
+              faceColor="#eef1f4"
+              depthColor="#ff5a36"
+              shadow
+            />
+            <DepthText
+              text="叙事"
+              layers={26}
+              depth={2.6}
+              tilt={9}
+              smoothing={0.12}
+              autoOrbit
+              orbitSpeed={0.26}
+              fontSize="clamp(2.4rem, 6.2vw, 6.9rem)"
+              fontWeight={900}
+              faceColor="#ff5a36"
+              depthColor="#7c1d0c"
+              shadow
+            />
+            <DepthText
+              text="。"
+              layers={8}
+              depth={2.6}
+              tilt={9}
+              smoothing={0.12}
+              autoOrbit
+              orbitSpeed={0.26}
+              fontSize="clamp(2.4rem, 6.2vw, 6.9rem)"
+              fontWeight={900}
+              faceColor="#eef1f4"
+              depthColor="#ff5a36"
+              shadow={false}
+            />
           </span>
         </h1>
 
