@@ -1480,11 +1480,6 @@
   width: fit-content;
 }
 
-.profile-card-wrap .pc-card {
-  height: 560px;
-  max-height: none;
-}
-
 /* 让照片铺满卡槽内部（官方组件默认按人像抠图底部对齐，这里是实拍照片，改为 cover 填充） */
 .profile-card-wrap .pc-avatar-content .avatar {
   height: 100%;
@@ -1501,9 +1496,6 @@
   }
   .profile-card-wrap {
     width: fit-content;
-  }
-  .profile-card-wrap .pc-card {
-    height: 500px;
   }
 }
 

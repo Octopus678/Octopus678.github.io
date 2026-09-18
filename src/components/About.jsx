@@ -37,10 +37,12 @@ export default function About() {
                   avatarUrl={PORTRAIT}
                   name="晋浩宇"
                   title="短视频剪辑 / 全流程内容创作者"
-                  showUserInfo={false}
-                  behindGlowColor="rgba(255, 90, 54, 0.45)"
-                  behindGlowSize="55%"
-                  innerGradient="linear-gradient(145deg, #3a12108c 0%, #ff5a3644 100%)"
+                  handle="jinhaoyu"
+                  status="南京 · 随时可聊"
+                  contactText="联系我"
+                  showUserInfo={true}
+                  enableTilt={true}
+                  enableMobileTilt={false}
                   onContactClick={() =>
                     document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })
                   }
