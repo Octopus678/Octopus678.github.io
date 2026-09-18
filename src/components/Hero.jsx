@@ -15,23 +15,15 @@ const MARQUEE_WORDS = [
   "数据复盘",
 ];
 
-// 全部 14 支成片：melius 风格画布排布（x/y 为百分比，w 为宽度 px，ar 为宽高比）
-const TILES = [
-  { file: "interview", label: "访谈", x: 60, y: 15, w: 210, ar: 0.75, r: -4, dim: 1 },
-  { file: "tcm1", label: "中医科普", x: 76, y: 36, w: 250, ar: 1, r: 3, dim: 1 },
-  { file: "fengdu", label: "丰都鬼城", x: 91, y: 12, w: 170, ar: 0.62, r: 6, dim: 0.95 },
-  { file: "politics", label: "时政解读", x: 68, y: 62, w: 230, ar: 1.6, r: -3, dim: 1 },
-  { file: "finance1", label: "财经解读", x: 86, y: 72, w: 190, ar: 0.75, r: 4, dim: 0.95 },
-  { file: "liveclip", label: "直播切片", x: 50, y: 84, w: 200, ar: 1.4, r: -5, dim: 0.9 },
-  { file: "qixue", label: "气血离居", x: 36, y: 6, w: 165, ar: 0.72, r: 5, dim: 0.8 },
-  { file: "flyco", label: "飞科产品细节", x: 12, y: 80, w: 195, ar: 1.3, r: -6, dim: 0.85 },
-  { file: "outro", label: "结束宣传片", x: 4, y: 40, w: 150, ar: 0.8, r: 4, dim: 0.7, ver: 3 },
-  { file: "worldnews", label: "国际时政", x: 26, y: 92, w: 150, ar: 1, r: -3, dim: 0.8 },
-  { file: "sep2", label: "作品", x: 96, y: 52, w: 140, ar: 0.7, r: -6, dim: 0.9 },
-  { file: "finance2", label: "财经解读", x: 58, y: 95, w: 165, ar: 1.5, r: 5, dim: 0.85 },
-  { file: "tcm2", label: "中医科普", x: 44, y: 26, w: 180, ar: 1.2, r: 3, dim: 0.6 },
-  { file: "finance3", label: "财经解读", x: 30, y: 55, w: 170, ar: 0.8, r: -4, dim: 0.55 },
+// 视频漂移墙（参考 React Bits DriftWall）：视频只分布在中部与右部，4 列上下交错漂移
+const COLUMNS = [
+  { dur: 46, reverse: false, tiles: ["interview", "fengdu", "finance1"] },
+  { dur: 38, reverse: true, tiles: ["tcm1", "politics", "outro"] },
+  { dur: 52, reverse: false, tiles: ["qixue", "liveclip", "tcm2", "flyco"] },
+  { dur: 42, reverse: true, tiles: ["sep2", "worldnews", "finance2", "finance3"] },
 ];
+
+const TITLE_SIZE = "clamp(2.4rem, 6.2vw, 6.9rem)";
 
 export default function Hero() {
   const [scrolled, setScrolled] = useState(false);
@@ -45,9 +37,6 @@ export default function Hero() {
 
   return (
     <section id="top" className={`hero ${scrolled ? "hero--scrolled" : ""}`}>
-      <div className="hero-bg" aria-hidden="true">
-        <img src="/bg.jpg" alt="" />
-      </div>
       <div className="hero-molten" aria-hidden="true">
         <MoltenMetal
           color1="#2a0802"
@@ -67,45 +56,50 @@ export default function Hero() {
           grainIntensity={0.06}
           mouseInteraction
           mouseStrength={0.25}
-          opacity={0.5}
+          opacity={0.28}
         />
       </div>
 
-      {/* melius 风格：全部成片在头部画布中循环播放（不可点击） */}
+      {/* 视频漂移墙：只在中部与右部，不可点击、不可拖动 */}
       <div className="video-canvas" aria-hidden="true">
         <ChromaZone className="video-chroma" radius={420} idleOpacity={0.92}>
-          {TILES.map((t, i) => (
-            <div
-              key={t.file}
-              className="v-tile"
-              style={{
-                left: `${t.x}%`,
-                top: `${t.y}%`,
-                width: `${t.w}px`,
-                aspectRatio: `${t.ar}`,
-                transform: `translate(-50%, -50%) rotate(${t.r}deg)`,
-                opacity: t.dim,
-                zIndex: 2,
-                animationDelay: `${(i % 7) * 1.3}s`,
-              }}
-            >
-              <video
-              poster={`/videos/${t.file}.jpg${t.ver ? `?v=${t.ver}` : ""}`}
-                muted
-                loop
-                autoPlay
-                playsInline
-                preload="auto"
+          <div className="drift-wall">
+            {COLUMNS.map((col, ci) => (
+              <div
+                className="drift-col"
+                key={ci}
+                style={{
+                  "--dur": `${col.dur}s`,
+                  "--dir": col.reverse ? "reverse" : "normal",
+                }}
               >
-                <source src={`/videos/${t.file}.webm${t.ver ? `?v=${t.ver}` : ""}`} type="video/webm" />
-                <source src={`/videos/${t.file}.mp4${t.ver ? `?v=${t.ver}` : ""}`} type="video/mp4" />
-              </video>
-            </div>
-          ))}
+                {[...col.tiles, ...col.tiles].map((file, i) => (
+                  <div className="drift-tile" key={`${file}-${i}`}>
+                    <video
+                      poster={`/videos/${file}.jpg${file === "outro" ? "?v=3" : ""}`}
+                      muted
+                      loop
+                      autoPlay
+                      playsInline
+                      preload="auto"
+                    >
+                      <source
+                        src={`/videos/${file}.webm${file === "outro" ? "?v=3" : ""}`}
+                        type="video/webm"
+                      />
+                      <source
+                        src={`/videos/${file}.mp4${file === "outro" ? "?v=3" : ""}`}
+                        type="video/mp4"
+                      />
+                    </video>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
         </ChromaZone>
       </div>
 
-      <div className="hero-shade" aria-hidden="true" />
       <div className="hero-scan" aria-hidden="true" />
 
       <div className="container hero-inner">
@@ -129,7 +123,7 @@ export default function Hero() {
               smoothing={0.12}
               autoOrbit
               orbitSpeed={0.26}
-              fontSize="clamp(2.4rem, 6.2vw, 6.9rem)"
+              fontSize={TITLE_SIZE}
               fontWeight={900}
               faceColor="#eef1f4"
               depthColor="#ff5a36"
@@ -145,7 +139,7 @@ export default function Hero() {
               smoothing={0.12}
               autoOrbit
               orbitSpeed={0.26}
-              fontSize="clamp(2.4rem, 6.2vw, 6.9rem)"
+              fontSize={TITLE_SIZE}
               fontWeight={900}
               faceColor="#eef1f4"
               depthColor="#ff5a36"
@@ -159,7 +153,7 @@ export default function Hero() {
               smoothing={0.12}
               autoOrbit
               orbitSpeed={0.26}
-              fontSize="clamp(2.4rem, 6.2vw, 6.9rem)"
+              fontSize={TITLE_SIZE}
               fontWeight={900}
               faceColor="#ff5a36"
               depthColor="#7c1d0c"
@@ -173,7 +167,7 @@ export default function Hero() {
               smoothing={0.12}
               autoOrbit
               orbitSpeed={0.26}
-              fontSize="clamp(2.4rem, 6.2vw, 6.9rem)"
+              fontSize={TITLE_SIZE}
               fontWeight={900}
               faceColor="#eef1f4"
               depthColor="#ff5a36"
