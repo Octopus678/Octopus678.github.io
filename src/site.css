@@ -1520,6 +1520,24 @@
   opacity: calc(0.5 + 0.4 * var(--pointer-from-center));
 }
 
+/* 姓名 / 职业文字：黑色字 + 白色阴影（取消官方渐变文字与混合模式） */
+.profile-card-wrap .pc-content:not(.pc-avatar-content) {
+  mix-blend-mode: normal;
+}
+
+.profile-card-wrap .pc-details h3,
+.profile-card-wrap .pc-details p {
+  background-image: none;
+  background-clip: border-box;
+  -webkit-background-clip: border-box;
+  -webkit-text-fill-color: #000;
+  color: #000;
+  text-shadow:
+    0 1px 3px rgba(255, 255, 255, 0.9),
+    0 0 10px rgba(255, 255, 255, 0.65),
+    0 0 22px rgba(255, 255, 255, 0.4);
+}
+
 @media (max-width: 1024px) {
   .intro-grid {
     grid-template-columns: minmax(280px, 360px);
