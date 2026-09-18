@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Modal from "./Modal";
+import ChromaZone from "./ChromaZone/ChromaZone";
 
 const VIDEOS = [
   { name: "访谈", file: "interview", tag: "人物 · 纪实" },
@@ -30,42 +31,44 @@ export default function Works() {
 
       <div className="prism-stage reveal">
         <div className="prism-glow" aria-hidden="true" />
-        <div className={`prism ${spinning ? "" : "prism--paused"}`}>
-          {VIDEOS.map((v, i) => (
-            <button
-              type="button"
-              key={v.file}
-              className="prism-face"
-              style={{
-                transform: `rotateY(${i * 90}deg) translateZ(200px)`,
-              }}
-              onClick={() => setActive(v)}
-              onMouseEnter={() => setHoverPaused(true)}
-              onMouseLeave={() => setHoverPaused(false)}
-              aria-label={`播放作品 ${v.name}`}
-            >
-              <video
-                poster={`/videos/${v.file}.jpg`}
-                muted
-                loop
-                playsInline
-                autoPlay
-                preload="metadata"
+        <ChromaZone className="prism-chroma" radius={300} idleOpacity={0.85}>
+          <div className={`prism ${spinning ? "" : "prism--paused"}`}>
+            {VIDEOS.map((v, i) => (
+              <button
+                type="button"
+                key={v.file}
+                className="prism-face"
+                style={{
+                  transform: `rotateY(${i * 90}deg) translateZ(200px)`,
+                }}
+                onClick={() => setActive(v)}
+                onMouseEnter={() => setHoverPaused(true)}
+                onMouseLeave={() => setHoverPaused(false)}
+                aria-label={`播放作品 ${v.name}`}
               >
-                <source src={`/videos/${v.file}.webm`} type="video/webm" />
-                <source src={`/videos/${v.file}.mp4`} type="video/mp4" />
-              </video>
-              <span className="prism-face-tag latin">9:16 REEL</span>
-              <span className="prism-face-name">
-                {v.name}
-                <small>{v.tag}</small>
-              </span>
-              <span className="prism-face-play" aria-hidden="true">
-                ▶
-              </span>
-            </button>
-          ))}
-        </div>
+                <video
+                  poster={`/videos/${v.file}.jpg`}
+                  muted
+                  loop
+                  playsInline
+                  autoPlay
+                  preload="metadata"
+                >
+                  <source src={`/videos/${v.file}.webm`} type="video/webm" />
+                  <source src={`/videos/${v.file}.mp4`} type="video/mp4" />
+                </video>
+                <span className="prism-face-tag latin">9:16 REEL</span>
+                <span className="prism-face-name">
+                  {v.name}
+                  <small>{v.tag}</small>
+                </span>
+                <span className="prism-face-play" aria-hidden="true">
+                  ▶
+                </span>
+              </button>
+            ))}
+          </div>
+        </ChromaZone>
 
         <div className="prism-controls">
           <button

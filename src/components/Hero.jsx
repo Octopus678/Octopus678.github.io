@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import MoltenMetal from "./MoltenMetal/MoltenMetal";
+import ChromaZone from "./ChromaZone/ChromaZone";
 
 const MARQUEE_WORDS = [
   "抖音",
@@ -71,34 +72,36 @@ export default function Hero() {
 
       {/* melius 风格：全部成片在头部画布中循环播放（不可点击） */}
       <div className="video-canvas" aria-hidden="true">
-        {TILES.map((t, i) => (
-          <div
-            key={t.file}
-            className="v-tile"
-            style={{
-              left: `${t.x}%`,
-              top: `${t.y}%`,
-              width: `${t.w}px`,
-              aspectRatio: `${t.ar}`,
-              transform: `translate(-50%, -50%) rotate(${t.r}deg)`,
-              opacity: t.dim,
-              zIndex: 2,
-              animationDelay: `${(i % 7) * 1.3}s`,
-            }}
-          >
-            <video
-              poster={`/videos/${t.file}.jpg`}
-              muted
-              loop
-              autoPlay
-              playsInline
-              preload="auto"
+        <ChromaZone className="video-chroma" radius={420} idleOpacity={0.92}>
+          {TILES.map((t, i) => (
+            <div
+              key={t.file}
+              className="v-tile"
+              style={{
+                left: `${t.x}%`,
+                top: `${t.y}%`,
+                width: `${t.w}px`,
+                aspectRatio: `${t.ar}`,
+                transform: `translate(-50%, -50%) rotate(${t.r}deg)`,
+                opacity: t.dim,
+                zIndex: 2,
+                animationDelay: `${(i % 7) * 1.3}s`,
+              }}
             >
-              <source src={`/videos/${t.file}.webm`} type="video/webm" />
-              <source src={`/videos/${t.file}.mp4`} type="video/mp4" />
-            </video>
-          </div>
-        ))}
+              <video
+                poster={`/videos/${t.file}.jpg`}
+                muted
+                loop
+                autoPlay
+                playsInline
+                preload="auto"
+              >
+                <source src={`/videos/${t.file}.webm`} type="video/webm" />
+                <source src={`/videos/${t.file}.mp4`} type="video/mp4" />
+              </video>
+            </div>
+          ))}
+        </ChromaZone>
       </div>
 
       <div className="hero-shade" aria-hidden="true" />
