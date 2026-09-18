@@ -1298,17 +1298,76 @@
   text-align: center;
 }
 
-.closing-title {
-  margin-top: 30px;
-  font-size: clamp(2.8rem, 7vw, 7rem);
-  font-weight: 800;
-  line-height: 1.1;
-  letter-spacing: 0.01em;
+/* 尾页大标题：React Bits MaskedHeading（视频填充字形 + 视差漂移） */
+.closing-heading {
+  margin: 34px auto 0;
 }
 
-.closing-title em {
-  font-style: normal;
+/* 让视频填充的字形在暗底上始终有轮廓（暖色柔光，不描边不遮挡） */
+.closing-heading .masked-heading__reveal {
+  filter: drop-shadow(0 6px 30px rgba(255, 90, 54, 0.3));
+}
+
+/* 尾页光束：React Bits LightRays，滑入本栏淡入、划出淡出 */
+.closing-rays {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: 0;
+  transition: opacity 1.1s ease;
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+
+.closing-rays.is-on {
+  opacity: 1;
+}
+
+.closing-rays .light-rays-container {
+  position: absolute;
+  inset: 0;
+}
+
+/* 尾页关键词落体：React Bits FallingText */
+.closing-falling {
+  position: relative;
+  z-index: 1;
+  margin-top: 52px;
+  height: clamp(190px, 23vh, 270px);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.016), rgba(255, 255, 255, 0));
+}
+
+.closing-falling .falling-text-container {
+  padding-top: 1.4em;
+  cursor: grab;
+}
+
+.closing-falling .falling-text-container:active {
+  cursor: grabbing;
+}
+
+.closing-falling .falling-text-target {
+  color: rgba(238, 241, 244, 0.92);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+.closing-falling .word {
+  padding: 7px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  background: rgba(12, 12, 15, 0.5);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  box-shadow: 0 12px 28px -16px rgba(0, 0, 0, 0.85);
+}
+
+.closing-falling .ft-accent {
   color: var(--accent);
+  border-color: rgba(255, 90, 54, 0.45);
+  box-shadow: 0 0 24px -8px rgba(255, 90, 54, 0.55);
 }
 
 .closing-sub {
