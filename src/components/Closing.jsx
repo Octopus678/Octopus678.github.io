@@ -1,11 +1,40 @@
 import { useEffect, useRef, useState } from "react";
 import MoltenMetal from "./MoltenMetal/MoltenMetal";
 import LightRays from "./LightRays/LightRays";
-import MaskedHeading from "./MaskedHeading/MaskedHeading";
 import FallingText from "./FallingText/FallingText";
 
-// 尾页落体关键词（React Bits FallingText）
-const FALLING_WORDS = "组成部分 设计 反应 关于 剪辑 审美 成片 发展 快速 精致";
+// 尾页落体关键词（React Bits FallingText）：每个词组出现两次，顺序打乱后随机掉落
+const FALLING_WORDS_BASE = [
+  "组成部分",
+  "设计",
+  "反应",
+  "关于",
+  "剪辑",
+  "审美",
+  "成片",
+  "发展",
+  "快速",
+  "精致",
+];
+/* 洗牌并避免同一个词紧挨着出现，掉落更随机 */
+const shuffleWords = (list) => {
+  const arr = [...list];
+  for (let i = arr.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  for (let i = 1; i < arr.length; i += 1) {
+    if (arr[i] === arr[i - 1]) {
+      const k = arr.findIndex((v, idx) => idx > i && v !== arr[i - 1]);
+      if (k > -1) {
+        [arr[i], arr[k]] = [arr[k], arr[i]];
+      }
+    }
+  }
+  return arr;
+};
+
+const FALLING_WORDS = shuffleWords([...FALLING_WORDS_BASE, ...FALLING_WORDS_BASE]).join(" ");
 
 export default function Closing() {
   const sectionRef = useRef(null);
@@ -76,27 +105,9 @@ export default function Closing() {
         <span className="overline" style={{ justifyContent: "center" }}>
           04 / Contact — 联系我
         </span>
-        <MaskedHeading
-          className="closing-heading"
-          text="有片子 随时聊"
-          tag="h2"
-          mediaType="video"
-          src="/videos/outro.mp4?v=3"
-          fillScale={1.35}
-          parallax={22}
-          drift={14}
-          brightness={1.05}
-          saturation={1.05}
-          reveal="rise"
-          duration={1.25}
-          stagger={0.12}
-          trigger="view"
-          align="center"
-          weight={800}
-          tracking={0.02}
-          lineHeight={1.06}
-          textScale={0.095}
-        />
+        <h2 className="closing-title reveal">
+          有片子，<em>随时聊</em>
+        </h2>
         <p className="closing-sub reveal">
           无论是月度内容合作、单条视频代剪，还是成片交付，都可以先聊聊需求。
         </p>
@@ -121,18 +132,20 @@ export default function Closing() {
           <span className="chip">南京 · 可线下面聊</span>
         </div>
 
-        {/* 关键词落体：滑到本栏后自由下落，可鼠标拖动 */}
-        <div className="closing-falling">
-          <FallingText
-            text={FALLING_WORDS}
-            highlightWords={["剪辑", "审美", "成片"]}
-            highlightClass="ft-accent"
-            trigger="scroll"
-            gravity={0.9}
-            mouseConstraintStiffness={0.25}
-            fontSize="1.05rem"
-          />
-        </div>
+      </div>
+
+      {/* 关键词落体：滑到本栏后随机掉落并堆叠，可鼠标拖动 */}
+      <div className="closing-falling">
+        <FallingText
+          text={FALLING_WORDS}
+          highlightWords={["剪辑", "审美", "成片"]}
+          highlightClass="ft-accent"
+          trigger="scroll"
+          gravity={0.9}
+          mouseConstraintStiffness={0.25}
+          fontSize="clamp(2.6rem, 6.9vw, 8.4rem)"
+          lineHeight={1.2}
+        />
       </div>
 
       <footer className="closing-footer">
