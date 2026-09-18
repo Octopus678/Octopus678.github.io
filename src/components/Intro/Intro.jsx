@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import GridScanBg from "./GridScanBg";
 import HammerStrike from "./HammerStrike";
+import ASSET_SIZES from "./assetSizes.json";
 import "./Intro.css";
 
 /* 站内需要预先加载完的素材（与 public/videos 实际文件对应） */
@@ -84,21 +85,14 @@ const runPool = async (items, worker, limit) => {
     while (cursor < items.length) {
       const i = cursor;
       cursor += 1;
-      await worker(items[i]);
+      await worker(items[i], i);
     }
   });
   await Promise.all(runners);
 };
 
-const headSize = async (url) => {
-  try {
-    const res = await fetch(url, { method: "HEAD", cache: "force-cache" });
-    if (!res.ok) return 0;
-    return Number(res.headers.get("content-length")) || 0;
-  } catch {
-    return 0;
-  }
-};
+/* 体积来自构建期生成的清单，省掉一轮 HEAD 请求，进度可以立刻开始走 */
+const sizeOf = (url) => ASSET_SIZES[url.split("?")[0]] || 0;
 
 const streamAsset = async (url, onBytes) => {
   const res = await fetch(url, { cache: "force-cache" });
@@ -167,21 +161,8 @@ export default function Intro({ onDone }) {
 
     const run = async () => {
       const list = collectAssets();
-      const sizes = new Map();
-      let total = 0;
-
-      await runPool(
-        list,
-        async (url) => {
-          const size = await headSize(url);
-          if (cancelled) return;
-          const value = size || 900 * 1024;
-          sizes.set(url, value);
-          total += value;
-        },
-        8
-      );
-      if (cancelled) return;
+      const sizes = list.map((url) => sizeOf(url) || 900 * 1024);
+      const total = sizes.reduce((a, b) => a + b, 0);
 
       let loaded = 0;
       const report = (force = false) => {
@@ -192,12 +173,13 @@ export default function Intro({ onDone }) {
         const ratio = total > 0 ? clamp01(loaded / total) : 0;
         setBoth(ratio);
       };
+      report(true);
 
       await runPool(
         list,
-        async (url) => {
+        async (url, index) => {
           if (cancelled) return;
-          const size = sizes.get(url) || 0;
+          const size = sizes[index] || 0;
           let fileBytes = 0;
           try {
             await streamAsset(url, (n) => {
