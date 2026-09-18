@@ -1,9 +1,7 @@
-import { lazy, Suspense, useState } from "react";
+import { useState } from "react";
 import Modal from "./Modal";
 import CircularGallery from "./CircularGallery/CircularGallery";
 import ProfileCard from "./ProfileCard/ProfileCard";
-
-const Lanyard = lazy(() => import("./Lanyard/Lanyard"));
 
 const PHOTOS = Array.from({ length: 11 }, (_, i) => ({
   src: `/photos/p${i + 1}.jpg`,
@@ -64,19 +62,6 @@ export default function About() {
                   }
                 />
               </div>
-            </div>
-
-            <div className="intro-lanyard">
-              <div className="lanyard-box">
-                <Suspense fallback={<div className="lanyard-fallback" />}>
-                  <Lanyard
-                    frontImage={PHOTOS[7].src}
-                    backImage={PHOTOS[1].src}
-                    imageFit="cover"
-                  />
-                </Suspense>
-              </div>
-              <p className="lanyard-hint">按住卡牌拖动 · 可以翻转</p>
             </div>
           </div>
         </div>

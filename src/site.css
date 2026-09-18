@@ -1508,9 +1508,9 @@
   position: relative;
   z-index: 1;
   display: grid;
-  grid-template-columns: 400px 400px;
+  grid-template-columns: 400px;
   justify-content: center;
-  gap: clamp(40px, 6vw, 100px);
+  gap: 0;
   align-items: center;
 }
 
@@ -1532,83 +1532,15 @@
   background: linear-gradient(150deg, rgba(12, 12, 16, 0.82), rgba(20, 18, 26, 0.62));
 }
 
-.intro-lanyard {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 18px;
-  height: 560px;
-}
-
-.lanyard-box {
-  width: 400px;
-  height: 560px;
-  overflow: visible;
-}
-
-.lanyard-box .lanyard-wrapper {
-  transform: scale(1.08);
-}
-
-.lanyard-fallback {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  border-radius: 26px;
-  background:
-    radial-gradient(ellipse at 72% 16%, rgba(255, 90, 54, 0.3), transparent 55%),
-    linear-gradient(160deg, #191720, #0b0a0e);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 30px 70px rgba(25, 19, 16, 0.35);
-  overflow: hidden;
-}
-
-.lanyard-fallback::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 8px;
-  background: #ff5a36;
-}
-
-.lanyard-fallback::after {
-  content: "JIN HAOYU";
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-latin);
-  font-size: 26px;
-  font-weight: 700;
-  letter-spacing: 0.3em;
-  color: rgba(245, 243, 239, 0.85);
-}
-
-.lanyard-hint {
-  font-size: 13px;
-  letter-spacing: 0.14em;
-  color: #8a5a3a;
-}
-
 @media (max-width: 1024px) {
   .intro-grid {
     grid-template-columns: minmax(280px, 360px);
-    gap: 56px;
+    gap: 0;
   }
-  .profile-card-wrap,
-  .lanyard-box {
+  .profile-card-wrap {
     width: min(360px, 84vw);
   }
-  .profile-card-wrap .pc-card,
-  .intro-lanyard,
-  .lanyard-box {
-    height: 500px;
-  }
-  .intro-lanyard {
+  .profile-card-wrap .pc-card {
     height: 500px;
   }
 }
