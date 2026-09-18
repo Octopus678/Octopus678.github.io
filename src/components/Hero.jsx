@@ -24,7 +24,7 @@ const TILES = [
   { file: "liveclip", label: "直播切片", x: 50, y: 84, w: 200, ar: 1.4, r: -5, dim: 0.9 },
   { file: "qixue", label: "气血离居", x: 36, y: 6, w: 165, ar: 0.72, r: 5, dim: 0.8 },
   { file: "flyco", label: "飞科产品细节", x: 12, y: 80, w: 195, ar: 1.3, r: -6, dim: 0.85 },
-  { file: "outro", label: "结束宣传片", x: 4, y: 40, w: 150, ar: 0.8, r: 4, dim: 0.7 },
+  { file: "outro", label: "结束宣传片", x: 4, y: 40, w: 150, ar: 0.8, r: 4, dim: 0.7, ver: 2 },
   { file: "worldnews", label: "国际时政", x: 26, y: 92, w: 150, ar: 1, r: -3, dim: 0.8 },
   { file: "sep2", label: "作品", x: 96, y: 52, w: 140, ar: 0.7, r: -6, dim: 0.9 },
   { file: "finance2", label: "财经解读", x: 58, y: 95, w: 165, ar: 1.5, r: 5, dim: 0.85 },
@@ -89,15 +89,15 @@ export default function Hero() {
               }}
             >
               <video
-                poster={`/videos/${t.file}.jpg`}
+              poster={`/videos/${t.file}.jpg${t.ver ? `?v=${t.ver}` : ""}`}
                 muted
                 loop
                 autoPlay
                 playsInline
                 preload="auto"
               >
-                <source src={`/videos/${t.file}.webm`} type="video/webm" />
-                <source src={`/videos/${t.file}.mp4`} type="video/mp4" />
+                <source src={`/videos/${t.file}.webm${t.ver ? `?v=${t.ver}` : ""}`} type="video/webm" />
+                <source src={`/videos/${t.file}.mp4${t.ver ? `?v=${t.ver}` : ""}`} type="video/mp4" />
               </video>
             </div>
           ))}

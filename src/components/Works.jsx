@@ -18,7 +18,7 @@ const REELS = [
 ];
 
 // 资源版本号：文件更新后用它强制刷新浏览器/CDN 缓存
-const V = "?v=3";
+const V = "?v=4";
 
 export default function Works() {
   return (

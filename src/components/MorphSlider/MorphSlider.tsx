@@ -275,6 +275,7 @@ interface EngineConfig {
   onIndexChange: (index: number) => void;
   onAspectChange?: (ratio: number) => void;
   onPlayStateChange?: (playing: boolean) => void;
+  onMutedChange?: (muted: boolean) => void;
   dprCap: number;
 }
 
@@ -285,6 +286,7 @@ class MorphEngine {
   private onIndexChange: (index: number) => void;
   private onAspectChange?: (ratio: number) => void;
   private onPlayStateChange?: (playing: boolean) => void;
+  private onMutedChange?: (muted: boolean) => void;
   private reducedMotion: boolean;
 
   private current: number;
@@ -319,6 +321,7 @@ class MorphEngine {
     this.onIndexChange = config.onIndexChange;
     this.onAspectChange = config.onAspectChange;
     this.onPlayStateChange = config.onPlayStateChange;
+    this.onMutedChange = config.onMutedChange;
     this.reducedMotion = config.reducedMotion;
     this.current = config.startIndex;
     this.shownIndex = config.startIndex;
@@ -499,20 +502,54 @@ class MorphEngine {
     }
   }
 
-  /** 点击画面：原地播放/暂停当前视频（不放大、不跳转） */
-  togglePlay(): boolean {
+  /**
+   * 点击画面：原地播放/暂停当前视频（不放大、不跳转）
+   * 带声播放被浏览器拦截时自动退回静音播放，保证一定能播。
+   */
+  async togglePlay(): Promise<'playing' | 'paused' | 'error'> {
     const video = this.videos[this.current];
-    if (!video) return false;
-    if (video.paused) {
-      video.muted = false;
-      video.loop = true;
-      void video.play().catch(() => {});
-    } else {
-      video.pause();
-    }
+    if (!video) return 'error';
     this.pendingFrame[this.current] = true;
-    this.onPlayStateChange?.(!video.paused);
-    return true;
+    if (!video.paused) {
+      video.pause();
+      this.onPlayStateChange?.(false);
+      return 'paused';
+    }
+    if (video.readyState < 2) {
+      // 还没缓冲到可播：先把数据要起来，播放请求会自动排队
+      try {
+        video.load();
+      } catch {}
+    }
+    // 1) 先尝试带声音播放
+    try {
+      video.muted = false;
+      video.volume = 1;
+      await video.play();
+      this.onPlayStateChange?.(true);
+      this.onMutedChange?.(video.muted);
+      return 'playing';
+    } catch {
+      // 2) 被拦截则退回静音播放（仍可播），并提示用户点音量键开启声音
+      try {
+        video.muted = true;
+        await video.play();
+        this.onPlayStateChange?.(true);
+        this.onMutedChange?.(true);
+        return 'playing';
+      } catch {
+        this.onPlayStateChange?.(false);
+        return 'error';
+      }
+    }
+  }
+
+  setMuted(muted: boolean): void {
+    const video = this.videos[this.current];
+    if (!video) return;
+    video.muted = muted;
+    if (!muted) video.volume = 1;
+    this.onMutedChange?.(muted);
   }
 
   isCurrentVideoPlaying(): boolean {
@@ -796,6 +833,8 @@ export default function MorphSlider({
   const [progress, setProgress] = useState(0);
   const [isSeeking, setIsSeeking] = useState(false);
   const [playing, setPlaying] = useState(false);
+  const [muted, setMutedState] = useState(true);
+  const [buffering, setBuffering] = useState(false);
   const isSeekingRef = useRef(false);
 
   const optsRef = useRef<EngineOptions>({
@@ -823,7 +862,8 @@ export default function MorphSlider({
       getOptions: () => optsRef.current,
       onIndexChange: setIndex,
       onAspectChange: setAspect,
-      onPlayStateChange: setPlaying
+      onPlayStateChange: setPlaying,
+      onMutedChange: setMutedState
     });
     engineRef.current = engine;
     setIndex(startIndex);
@@ -878,7 +918,7 @@ export default function MorphSlider({
       active = false;
       if (wasActive) engineRef.current?.endDrag();
       // 位移很小 → 视为点击：原地播放/暂停视频
-      if (maxDx < 6) engineRef.current?.togglePlay();
+      if (maxDx < 6) void handleTogglePlay();
     };
 
     el.addEventListener('pointerdown', onDown);
@@ -918,6 +958,23 @@ export default function MorphSlider({
     const ratio = Math.min(1, Math.max(0, (e.clientX - rect.left) / rect.width));
     engineRef.current?.seek(ratio);
     setProgress(ratio);
+  };
+
+  const handleTogglePlay = useCallback(async () => {
+    const engine = engineRef.current;
+    if (!engine) return;
+    setBuffering(true);
+    const result = await engine.togglePlay();
+    setBuffering(false);
+    if (result === 'error') {
+      // 兜底：至少把静音播放打开
+      engine.setMuted(true);
+    }
+  }, []);
+
+  const handleToggleMute = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    engineRef.current?.setMuted(!muted);
   };
 
   const onSeekDown = (e: React.PointerEvent<HTMLDivElement>) => {
