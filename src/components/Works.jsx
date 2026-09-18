@@ -2,10 +2,10 @@ import { useState } from "react";
 import Modal from "./Modal";
 
 const VIDEOS = [
-  { name: "景总1", file: "jingzong1", tag: "人物 · 纪实" },
-  { name: "平哥2", file: "pingge2", tag: "口播 · 短视频" },
-  { name: "慧子", file: "huizi", tag: "竖屏 · 短视频" },
-  { name: "李云雅1", file: "liyunya1", tag: "竖屏 · 短视频" },
+  { name: "访谈", file: "interview", tag: "人物 · 纪实" },
+  { name: "中医科普", file: "tcm1", tag: "科普 · 短视频" },
+  { name: "财经解读", file: "finance1", tag: "口播 · 短视频" },
+  { name: "丰都鬼城", file: "fengdu", tag: "文旅 · 短片" },
 ];
 
 export default function Works() {
@@ -45,14 +45,16 @@ export default function Works() {
               aria-label={`播放作品 ${v.name}`}
             >
               <video
-                src={`/videos/${v.file}.mp4`}
                 poster={`/videos/${v.file}.jpg`}
                 muted
                 loop
                 playsInline
                 autoPlay
                 preload="metadata"
-              />
+              >
+                <source src={`/videos/${v.file}.webm`} type="video/webm" />
+                <source src={`/videos/${v.file}.mp4`} type="video/mp4" />
+              </video>
               <span className="prism-face-tag latin">9:16 REEL</span>
               <span className="prism-face-name">
                 {v.name}

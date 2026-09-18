@@ -13,6 +13,24 @@ const MARQUEE_WORDS = [
   "数据复盘",
 ];
 
+// 全部 14 支成片：melius 风格画布排布（x/y 为百分比，w 为宽度 px，ar 为宽高比）
+const TILES = [
+  { file: "interview", label: "访谈", x: 60, y: 15, w: 210, ar: 0.75, r: -4, dim: 1 },
+  { file: "tcm1", label: "中医科普", x: 76, y: 36, w: 250, ar: 1, r: 3, dim: 1 },
+  { file: "fengdu", label: "丰都鬼城", x: 91, y: 12, w: 170, ar: 0.62, r: 6, dim: 0.95 },
+  { file: "politics", label: "时政解读", x: 68, y: 62, w: 230, ar: 1.6, r: -3, dim: 1 },
+  { file: "finance1", label: "财经解读", x: 86, y: 72, w: 190, ar: 0.75, r: 4, dim: 0.95 },
+  { file: "liveclip", label: "直播切片", x: 50, y: 84, w: 200, ar: 1.4, r: -5, dim: 0.9 },
+  { file: "qixue", label: "气血离居", x: 36, y: 6, w: 165, ar: 0.72, r: 5, dim: 0.8 },
+  { file: "flyco", label: "飞科产品细节", x: 12, y: 80, w: 195, ar: 1.3, r: -6, dim: 0.85 },
+  { file: "outro", label: "结束宣传片", x: 4, y: 40, w: 150, ar: 0.8, r: 4, dim: 0.7 },
+  { file: "worldnews", label: "国际时政", x: 26, y: 92, w: 150, ar: 1, r: -3, dim: 0.8 },
+  { file: "sep2", label: "作品", x: 96, y: 52, w: 140, ar: 0.7, r: -6, dim: 0.9 },
+  { file: "finance2", label: "财经解读", x: 58, y: 95, w: 165, ar: 1.5, r: 5, dim: 0.85 },
+  { file: "tcm2", label: "中医科普", x: 44, y: 26, w: 180, ar: 1.2, r: 3, dim: 0.6 },
+  { file: "finance3", label: "财经解读", x: 30, y: 55, w: 170, ar: 0.8, r: -4, dim: 0.55 },
+];
+
 export default function Hero() {
   const [scrolled, setScrolled] = useState(false);
 
@@ -47,9 +65,42 @@ export default function Hero() {
           grainIntensity={0.06}
           mouseInteraction
           mouseStrength={0.25}
-          opacity={0.55}
+          opacity={0.5}
         />
       </div>
+
+      {/* melius 风格：全部成片在头部画布中循环播放（不可点击） */}
+      <div className="video-canvas" aria-hidden="true">
+        {TILES.map((t, i) => (
+          <div
+            key={t.file}
+            className="v-tile"
+            style={{
+              left: `${t.x}%`,
+              top: `${t.y}%`,
+              width: `${t.w}px`,
+              aspectRatio: `${t.ar}`,
+              transform: `translate(-50%, -50%) rotate(${t.r}deg)`,
+              opacity: t.dim,
+              zIndex: 2,
+              animationDelay: `${(i % 7) * 1.3}s`,
+            }}
+          >
+            <video
+              poster={`/videos/${t.file}.jpg`}
+              muted
+              loop
+              autoPlay
+              playsInline
+              preload="metadata"
+            >
+              <source src={`/videos/${t.file}.webm`} type="video/webm" />
+              <source src={`/videos/${t.file}.mp4`} type="video/mp4" />
+            </video>
+          </div>
+        ))}
+      </div>
+
       <div className="hero-shade" aria-hidden="true" />
       <div className="hero-scan" aria-hidden="true" />
 
@@ -101,7 +152,7 @@ export default function Hero() {
           PLATFORMS — <b>DOUYIN / KUAISHOU / XHS / CHANNELS / MEITUAN</b>
         </span>
         <span className="spec">
-          OUTPUT — <b>1080P · 60FPS · 9:16 / 16:9</b>
+          REEL — <b>14 支成片循环展映</b>
         </span>
         <span className="scroll-hint">
           <span className="line" aria-hidden="true" />
