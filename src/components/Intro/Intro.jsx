@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import GridScanBg from "./GridScanBg";
-import HammerStrike from "./HammerStrike";
 import ASSET_SIZES from "./assetSizes.json";
 import "./Intro.css";
+
+/* 加载条里轮播的词（Uiverse fresh-lizard-20 的结构） */
+const LOADER_WORDS = ["剪辑", "调色", "成片", "交付", "剪辑"];
 
 /* 站内需要预先加载完的素材（与 public/videos 实际文件对应） */
 const HEAD_SLUGS = [
@@ -113,7 +115,7 @@ const streamAsset = async (url, onBytes) => {
 export default function Intro({ onDone }) {
   const [progress, setProgress] = useState(0);
   const [phase, setPhase] = useState("loading");
-  const [hammerMounted, setHammerMounted] = useState(true);
+  const [centerMounted, setCenterMounted] = useState(true);
   const rootRef = useRef(null);
   const frameRef = useRef(null);
   const contentRef = useRef(null);
@@ -227,7 +229,7 @@ export default function Intro({ onDone }) {
   /* 加载完成后：锤子落最后一击 → 让位给按钮 */
   useEffect(() => {
     if (phase !== "ready") return undefined;
-    const timer = setTimeout(() => setHammerMounted(false), 950);
+    const timer = setTimeout(() => setCenterMounted(false), 950);
     return () => clearTimeout(timer);
   }, [phase]);
 
@@ -290,13 +292,13 @@ export default function Intro({ onDone }) {
       <div className="intro__frame" ref={frameRef}>
         <div className="intro__bg">
           <GridScanBg
-            linesColor="#5f5468"
-            scanColor="#ff6a3d"
-            scanOpacity={0.72}
+            linesColor="#574a70"
+            scanColor="#a855f7"
+            scanOpacity={0.75}
             gridScale={0.12}
             lineJitter={0.12}
             lineThickness={1.15}
-            scanGlow={1.15}
+            scanGlow={1.25}
             scanSoftness={2.2}
             scanDuration={2.2}
             scanDelay={1.5}
@@ -310,9 +312,23 @@ export default function Intro({ onDone }) {
             JIN HAOYU <span>/</span> 短视频剪辑
           </div>
           <div className="intro__stage">
-            {hammerMounted ? (
-              <div className={`intro__hammer ${phase === "loading" ? "is-on" : "is-off"}`}>
-                <HammerStrike active={phase === "loading"} progress={progress} />
+            {centerMounted ? (
+              <div className={`intro__mole ${phase === "loading" ? "is-on" : "is-off"}`}>
+                <div className="loading-container">
+                  <div className="ground" />
+                  <div className="skeleton">
+                    <div className="head">
+                      <div className="eye left" />
+                      <div className="eye right" />
+                      <div className="mouth" />
+                    </div>
+                    <div className="body" />
+                    <div className="arm left" />
+                    <div className="arm right" />
+                    <div className="leg left" />
+                    <div className="leg right" />
+                  </div>
+                </div>
               </div>
             ) : null}
 
@@ -328,30 +344,25 @@ export default function Intro({ onDone }) {
 
           <div className={`intro__progress ${phase === "loading" ? "" : "is-hidden"}`}>
             <div
-              className="loader"
+              className="card"
               role="progressbar"
               aria-valuemin={0}
               aria-valuemax={100}
               aria-valuenow={pct}
               aria-label="加载进度"
             >
-              <div className="loading-text">
-                Loading
-                <span className="dot">.</span>
-                <span className="dot">.</span>
-                <span className="dot">.</span>
-                <span className="intro__pct">{pct}%</span>
-              </div>
-              <div className="loading-bar-background">
-                <div className="loading-bar" style={{ width: `${progress * 100}%` }}>
-                  <div className="white-bars-container">
-                    {Array.from({ length: 10 }).map((_, i) => (
-                      <div className="white-bar" key={i} />
-                    ))}
-                  </div>
+              <div className="loader">
+                <p>loading</p>
+                <div className="words">
+                  {LOADER_WORDS.map((word, i) => (
+                    <span className="word" key={`${word}-${i}`}>
+                      {word}
+                    </span>
+                  ))}
                 </div>
               </div>
             </div>
+            <span className="intro__pct">{pct}%</span>
           </div>
         </div>
       </div>

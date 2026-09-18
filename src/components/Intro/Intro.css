@@ -3,7 +3,7 @@
   position: fixed;
   inset: 0;
   z-index: 9999;
-  background: #06070a;
+  background: #120f17;
   overscroll-behavior: none;
 }
 
@@ -11,7 +11,7 @@
   position: absolute;
   inset: 0;
   overflow: hidden;
-  background: #06070a;
+  background: #120f17;
   will-change: clip-path;
 }
 
@@ -25,8 +25,8 @@
   inset: 0;
   pointer-events: none;
   background:
-    radial-gradient(ellipse 66% 62% at 50% 52%, rgba(6, 7, 10, 0) 0%, rgba(6, 7, 10, 0.55) 100%),
-    linear-gradient(180deg, rgba(6, 7, 10, 0.38) 0%, rgba(6, 7, 10, 0) 40%, rgba(6, 7, 10, 0.5) 100%);
+    radial-gradient(ellipse 66% 62% at 50% 52%, rgba(18, 15, 23, 0) 0%, rgba(18, 15, 23, 0.6) 100%),
+    linear-gradient(180deg, rgba(18, 15, 23, 0.4) 0%, rgba(18, 15, 23, 0) 40%, rgba(18, 15, 23, 0.55) 100%);
 }
 
 .intro__content {
@@ -45,31 +45,231 @@
   font-weight: 600;
   letter-spacing: 0.42em;
   text-transform: uppercase;
-  color: rgba(238, 241, 244, 0.58);
+  color: #b497cf;
   margin-bottom: clamp(8px, 2vh, 22px);
 }
 
 .intro__brand span {
-  color: var(--accent);
+  color: #a855f7;
 }
 
 .intro__stage {
   position: relative;
   width: min(560px, 78vw);
-  height: clamp(280px, 36vh, 372px);
+  height: clamp(220px, 27vh, 300px);
   display: grid;
   place-items: center;
 }
 
-.intro__hammer {
+/* 中间：Uiverse「sameer_4340/fresh-mole-21」爬行小人（紫色调） */
+.intro__mole {
   position: absolute;
   inset: 0;
+  display: grid;
+  place-items: center;
   transition: opacity 0.55s ease, transform 0.55s ease;
 }
 
-.intro__hammer.is-off {
+.intro__mole.is-off {
   opacity: 0;
   transform: scale(0.94);
+}
+
+.intro__mole .loading-container {
+  position: relative;
+  width: min(320px, 70vw);
+  height: 150px;
+  overflow: hidden;
+  transform: scale(1.5);
+}
+
+.intro__mole .ground {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 5px;
+  background: linear-gradient(90deg, transparent, #a855f7, transparent);
+  animation: mole-ground 2s linear infinite;
+}
+
+@keyframes mole-ground {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.intro__mole .skeleton {
+  position: absolute;
+  bottom: 12px;
+  left: 0;
+  width: 100px;
+  height: 80px;
+  animation: mole-crawl 2s linear infinite;
+}
+
+@keyframes mole-crawl {
+  0% {
+    transform: translateX(-100px);
+  }
+  100% {
+    transform: translateX(320px);
+  }
+}
+
+.intro__mole .head {
+  position: absolute;
+  top: 0;
+  left: 30px;
+  width: 30px;
+  height: 30px;
+  background-color: #cbb9f5;
+  border-radius: 50%;
+  box-shadow: inset 0 -2px 0 #7e3db8;
+  animation: mole-head-bob 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes mole-head-bob {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-5px);
+  }
+}
+
+.intro__mole .eye {
+  position: absolute;
+  top: 11px;
+  width: 5px;
+  height: 5px;
+  background-color: #171123;
+  border-radius: 50%;
+}
+
+.intro__mole .eye.left {
+  left: 10px;
+}
+
+.intro__mole .eye.right {
+  left: 20px;
+}
+
+.intro__mole .mouth {
+  position: absolute;
+  top: 18px;
+  left: 11px;
+  width: 12px;
+  height: 5px;
+  background-color: #171123;
+  border-radius: 0 0 5px 5px;
+  animation: mole-mouth-talk 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes mole-mouth-talk {
+  0% {
+    height: 3px;
+  }
+  100% {
+    height: 6px;
+  }
+}
+
+.intro__mole .body {
+  position: absolute;
+  top: 30px;
+  left: 35px;
+  width: 20px;
+  height: 35px;
+  background-color: #cbb9f5;
+  border-radius: 10px;
+  box-shadow: inset 0 -2px 0 #7e3db8;
+}
+
+.intro__mole .arm {
+  position: absolute;
+  top: 30px;
+  width: 10px;
+  height: 35px;
+  background-color: #cbb9f5;
+  border-radius: 50px;
+  box-shadow: inset 0 -2px 0 #7e3db8;
+}
+
+.intro__mole .arm.left {
+  left: 25px;
+  transform-origin: top center;
+  animation: mole-arm-left 1s ease-in-out infinite;
+}
+
+.intro__mole .arm.right {
+  left: 55px;
+  transform-origin: top center;
+  animation: mole-arm-right 1s ease-in-out infinite;
+}
+
+@keyframes mole-arm-left {
+  0%,
+  100% {
+    transform: rotate(30deg);
+  }
+  50% {
+    transform: rotate(-20deg);
+  }
+}
+
+@keyframes mole-arm-right {
+  0%,
+  100% {
+    transform: rotate(-20deg);
+  }
+  50% {
+    transform: rotate(30deg);
+  }
+}
+
+.intro__mole .leg {
+  position: absolute;
+  top: 60px;
+  width: 10px;
+  height: 40px;
+  background-color: #cbb9f5;
+  border-radius: 50px;
+  box-shadow: inset 0 -2px 0 #7e3db8;
+}
+
+.intro__mole .leg.left {
+  left: 35px;
+  transform-origin: top center;
+  animation: mole-leg-left 1s ease-in-out infinite;
+}
+
+.intro__mole .leg.right {
+  left: 45px;
+  transform-origin: top center;
+  animation: mole-leg-right 1s ease-in-out infinite;
+}
+
+@keyframes mole-leg-left {
+  0%,
+  100% {
+    transform: rotate(10deg);
+  }
+  50% {
+    transform: rotate(-30deg);
+  }
+}
+
+@keyframes mole-leg-right {
+  0%,
+  100% {
+    transform: rotate(-30deg);
+  }
+  50% {
+    transform: rotate(10deg);
+  }
 }
 
 /* 触感按钮（加载完成后取代锤子） */
@@ -81,18 +281,18 @@
   opacity: 0;
   pointer-events: none;
   padding: clamp(16px, 2vh, 20px) clamp(40px, 5vw, 58px);
-  border: 1px solid rgba(255, 214, 196, 0.3);
   border-radius: 18px;
   font-family: var(--font-sans);
   font-size: clamp(17px, 1.35vw, 21px);
   font-weight: 600;
   letter-spacing: 0.16em;
-  color: #fff6f1;
-  background: linear-gradient(180deg, #ff7043 0%, #e8451f 100%);
+  color: #ffffff;
+  background: linear-gradient(180deg, #b76bff 0%, #8f36e8 100%);
+  border: 1px solid rgba(196, 181, 253, 0.4);
   box-shadow:
-    0 9px 0 0 #6d1c08,
-    0 22px 46px -16px rgba(255, 90, 54, 0.7),
-    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+    0 9px 0 0 #40156e,
+    0 22px 46px -16px rgba(168, 85, 247, 0.72),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
   transition: transform 0.14s ease, box-shadow 0.14s ease, filter 0.2s ease, opacity 0.55s ease;
   cursor: pointer;
 }
@@ -111,15 +311,17 @@
 .intro__btn.is-on:active {
   transform: translate(-50%, calc(-50% + 8px)) scale(0.995);
   box-shadow:
-    0 1px 0 0 #6d1c08,
-    0 12px 22px -14px rgba(255, 90, 54, 0.6),
-    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    0 1px 0 0 #40156e,
+    0 12px 22px -14px rgba(168, 85, 247, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 
-/* 锤子正下方的加载条：Uiverse「KSAplay/shy-rat-62」用法与配色改造版 */
+/* 加载样式：Uiverse「kennyotsu/fresh-lizard-20」文字轮播 loader（紫色调） */
 .intro__progress {
-  width: min(340px, 70vw);
-  margin-top: clamp(10px, 3vh, 28px);
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-top: clamp(6px, 2vh, 20px);
   transition: opacity 0.45s ease, transform 0.45s ease;
 }
 
@@ -128,111 +330,87 @@
   transform: translateY(8px);
 }
 
+.intro__progress .card {
+  --bg-color: #1b1722;
+  background-color: var(--bg-color);
+  padding: 0.6rem 1.4rem;
+  border-radius: 1.25rem;
+  border: 1px solid #2f293a;
+  box-shadow: 0 26px 60px -34px rgba(82, 39, 255, 0.75);
+}
+
 .intro__progress .loader {
+  color: #b497cf;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 23px;
+  box-sizing: content-box;
+  height: 40px;
+  padding: 4px 6px;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  gap: 7px;
-  width: 100%;
+  border-radius: 8px;
 }
 
-.intro__progress .loading-text {
-  display: flex;
-  align-items: baseline;
-  font-family: var(--font-latin);
-  font-size: 13pt;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  color: rgba(238, 241, 244, 0.86);
+.intro__progress .words {
+  overflow: hidden;
+  position: relative;
 }
 
-.intro__progress .dot {
-  margin-left: 3px;
-  animation: intro-dot-blink 1.5s infinite;
+.intro__progress .words::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  background: linear-gradient(
+    var(--bg-color) 10%,
+    transparent 30%,
+    transparent 70%,
+    var(--bg-color) 90%
+  );
 }
 
-.intro__progress .dot:nth-child(2) {
-  animation-delay: 0.3s;
+.intro__progress .word {
+  display: block;
+  height: 100%;
+  padding-left: 8px;
+  color: #a855f7;
+  animation: intro-word-spin 4s infinite;
 }
 
-.intro__progress .dot:nth-child(3) {
-  animation-delay: 0.6s;
-}
-
-@keyframes intro-dot-blink {
-  0%,
-  100% {
-    opacity: 0;
+@keyframes intro-word-spin {
+  10% {
+    transform: translateY(-102%);
+  }
+  25% {
+    transform: translateY(-100%);
+  }
+  35% {
+    transform: translateY(-202%);
   }
   50% {
-    opacity: 1;
+    transform: translateY(-200%);
+  }
+  60% {
+    transform: translateY(-302%);
+  }
+  75% {
+    transform: translateY(-300%);
+  }
+  85% {
+    transform: translateY(-402%);
+  }
+  100% {
+    transform: translateY(-400%);
   }
 }
 
 .intro__pct {
-  margin-left: 14px;
+  font-family: var(--font-latin);
   font-size: 13px;
   font-weight: 600;
-  letter-spacing: 0.08em;
-  color: var(--accent);
+  letter-spacing: 0.1em;
+  color: #a855f7;
   font-variant-numeric: tabular-nums;
-}
-
-.intro__progress .loading-bar-background {
-  --height: 30px;
-  display: flex;
-  align-items: center;
-  box-sizing: border-box;
-  padding: 5px;
-  width: 100%;
-  height: var(--height);
-  background-color: #16171b;
-  box-shadow:
-    inset -2px 2px 4px 0 rgba(0, 0, 0, 0.9),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.06);
-  border-radius: calc(var(--height) / 2);
-}
-
-.intro__progress .loading-bar {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  --height: 20px;
-  min-width: 20px;
-  height: var(--height);
-  overflow: hidden;
-  /* 主题色：由深橙到暖橙的渐变 */
-  background: linear-gradient(0deg, #e8451f 0%, #ff9a5c 100%);
-  box-shadow: 0 0 20px rgba(255, 90, 54, 0.45);
-  border-radius: calc(var(--height) / 2);
-  transition: width 0.3s ease-out;
-}
-
-.intro__progress .white-bars-container {
-  position: absolute;
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  animation: intro-bars-drift 2.6s linear infinite;
-}
-
-.intro__progress .white-bar {
-  width: 10px;
-  height: 45px;
-  opacity: 0.3;
-  rotate: 45deg;
-  background: linear-gradient(-45deg, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0) 70%);
-}
-
-@keyframes intro-bars-drift {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(28px);
-  }
 }
 
 body.intro-open {
