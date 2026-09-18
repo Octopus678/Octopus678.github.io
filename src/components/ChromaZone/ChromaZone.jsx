@@ -4,6 +4,12 @@ import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import "./ChromaZone.css";
 
+// 内联注入滤镜，避免构建工具压缩时丢失 backdrop-filter
+const CHROMA_FILTER = {
+  backdropFilter: "grayscale(1) brightness(0.78)",
+  WebkitBackdropFilter: "grayscale(1) brightness(0.78)",
+};
+
 export default function ChromaZone({
   children,
   className = "",
@@ -66,8 +72,12 @@ export default function ChromaZone({
       onPointerLeave={handleLeave}
     >
       {children}
-      <div className="chroma-overlay" />
-      <div ref={fadeRef} className="chroma-fade" style={{ opacity: idleOpacity }} />
+      <div className="chroma-overlay" style={CHROMA_FILTER} />
+      <div
+        ref={fadeRef}
+        className="chroma-fade"
+        style={{ ...CHROMA_FILTER, opacity: idleOpacity }}
+      />
     </div>
   );
 }
