@@ -1335,6 +1335,51 @@
   flex-wrap: wrap;
 }
 
+/* 底部联系方式：沿用顶部导航 PillNav 的圆形填充动效，外观与位置保持原样 */
+.closing-actions .pill {
+  height: auto;
+  padding: 16px 34px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  line-height: 1;
+  text-transform: none;
+}
+
+.closing-actions .pill.btn-ghost {
+  padding: 15px 22px;
+  border-radius: 999px;
+}
+
+.closing-actions .pill .label-stack,
+.closing-actions .pill-label,
+.closing-actions .pill-label-hover {
+  display: inline-flex;
+  align-items: center;
+  gap: 13px;
+  line-height: 1;
+  white-space: nowrap;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+}
+
+.closing-actions .pill-label-hover {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+/* 去掉旧的 hover 反馈，只留导航栏同款动效 */
+.closing-actions .pill:hover {
+  transform: none;
+  box-shadow: none;
+  color: var(--pill-text);
+}
+
+.closing-actions .pill:hover .arrow {
+  transform: none;
+}
+
 .closing-chips {
   margin-top: 44px;
   display: flex;

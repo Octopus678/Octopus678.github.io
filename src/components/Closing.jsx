@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import MoltenMetal from "./MoltenMetal/MoltenMetal";
 import LightRays from "./LightRays/LightRays";
 import FallingText from "./FallingText/FallingText";
+import PillButton from "./PillNav/PillButton";
 
 // 尾页落体关键词（React Bits FallingText）：每个词组出现两次，顺序打乱后随机掉落
 const FALLING_WORDS_BASE = [
@@ -128,16 +129,36 @@ export default function Closing() {
         </p>
 
         <div className="closing-actions reveal">
-          <a href="tel:+8613333443088" className="btn-primary">
+          <PillButton
+            href="tel:+8613333443088"
+            className="btn-primary"
+            ariaLabel="拨打电话 133 3344 3088"
+            vars={{
+              "--base": "#0a0b0d",
+              "--pill-bg": "var(--accent)",
+              "--pill-text": "#0a0b0d",
+              "--hover-text": "#f6f7f8"
+            }}
+          >
             <span aria-hidden="true">☎</span>
             <span className="latin">133 3344 3088</span>
-          </a>
-          <a href="mailto:pidtiy@163.com" className="btn-ghost">
+          </PillButton>
+          <PillButton
+            href="mailto:pidtiy@163.com"
+            className="btn-ghost"
+            ariaLabel="发送邮件 pidtiy@163.com"
+            vars={{
+              "--base": "var(--accent)",
+              "--pill-bg": "transparent",
+              "--pill-text": "var(--muted)",
+              "--hover-text": "#0a0b0d"
+            }}
+          >
             <span>pidtiy@163.com</span>
             <span className="arrow" aria-hidden="true">
               →
             </span>
-          </a>
+          </PillButton>
         </div>
 
         <div className="closing-chips reveal">
