@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import MoltenMetal from "./MoltenMetal/MoltenMetal";
 import DriftWall from "./DriftWall/DriftWall";
 import DepthText from "./DepthText/DepthText";
+import GooeyNav from "./GooeyNav/GooeyNav";
+import BorderGlow from "./BorderGlow/BorderGlow";
 
 const MARQUEE_WORDS = [
   "抖音",
@@ -46,6 +48,54 @@ const TITLE_SIZE = "clamp(2.4rem, 6.2vw, 6.9rem)";
 
 export default function Hero() {
   const [scrolled, setScrolled] = useState(false);
+
+  /* 两个 CTA：GooeyNav 提供果冻粒子与文字切换，BorderGlow 负责每颗按钮的边缘发光 */
+  const ctaItems = [
+    {
+      href: "#contact",
+      label: "聊聊合作",
+      content: (
+        <BorderGlow
+          className="hero-cta hero-cta--primary"
+          backgroundColor="transparent"
+          borderRadius={999}
+          glowRadius={30}
+          glowIntensity={1.15}
+          coneSpread={32}
+          edgeSensitivity={34}
+          fillOpacity={0.4}
+          colors={["#ff5a36", "#ff9a5c", "#ff3d16"]}
+        >
+          <span>聊聊合作</span>
+          <span className="arrow" aria-hidden="true">
+            →
+          </span>
+        </BorderGlow>
+      )
+    },
+    {
+      href: "#works",
+      label: "查看作品",
+      content: (
+        <BorderGlow
+          className="hero-cta hero-cta--ghost"
+          backgroundColor="transparent"
+          borderRadius={999}
+          glowRadius={30}
+          glowIntensity={1}
+          coneSpread={32}
+          edgeSensitivity={34}
+          fillOpacity={0.32}
+          colors={["#ff5a36", "#ffb27a", "#ff5a36"]}
+        >
+          <span>查看作品</span>
+          <span className="arrow" aria-hidden="true">
+            →
+          </span>
+        </BorderGlow>
+      )
+    }
+  ];
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -184,17 +234,16 @@ export default function Hero() {
           <strong>成片交付</strong>，让每一帧都为叙事服务。
         </p>
 
+        {/* CTA：GooeyNav 果冻效果 + BorderGlow 边缘发光，点击跳到对应栏目 */}
         <div className="hero-actions">
-          <a href="#contact" className="btn-primary">
-            聊聊合作
-            <span aria-hidden="true">→</span>
-          </a>
-          <a href="#works" className="btn-ghost">
-            <span>查看作品</span>
-            <span className="arrow" aria-hidden="true">
-              ↓
-            </span>
-          </a>
+          <GooeyNav
+            items={ctaItems}
+            particleCount={14}
+            particleDistances={[80, 10]}
+            particleR={90}
+            timeVariance={280}
+            initialActiveIndex={0}
+          />
         </div>
       </div>
 

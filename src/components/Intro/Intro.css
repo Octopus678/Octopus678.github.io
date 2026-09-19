@@ -55,12 +55,13 @@
 
 /* 加载动画正上方：Elemental Lightning 风格电光文字（不出现闪电本体） */
 .intro__charge {
-  margin: 0 0 clamp(6px, 1.4vh, 18px);
+  margin: 0 0 clamp(10px, 2vh, 26px);
   font-family: var(--font-sans);
-  font-size: clamp(15px, 1.42vw, 21px);
+  /* 与站内每一栏主标题同尺寸 */
+  font-size: clamp(2.2rem, 4vw, 4.2rem);
   font-weight: 600;
-  letter-spacing: 0.3em;
-  text-indent: 0.3em;
+  letter-spacing: 0.06em;
+  text-indent: 0.06em;
   white-space: nowrap;
   background-image: linear-gradient(
     100deg,

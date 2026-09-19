@@ -3,11 +3,11 @@ import PillNav from "./PillNav/PillNav";
 
 // 首个条目同时作为 logo 的跳转目标（React Bits PillNav 的约定）
 const ITEMS = [
-  { href: "#top", label: "首页" },
-  { href: "#about", label: "关于" },
-  { href: "#works", label: "作品" },
-  { href: "#strengths", label: "优势" },
-  { href: "#contact", label: "联系" },
+  { href: "#top", label: "首页", glass: true },
+  { href: "#about", label: "关于", glass: true },
+  { href: "#works", label: "作品", glass: true },
+  { href: "#strengths", label: "优势", glass: true },
+  { href: "#contact", label: "联系", glass: true },
 ];
 
 export default function Nav() {

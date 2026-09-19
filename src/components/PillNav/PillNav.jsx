@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
+import GlassSurface from '../GlassSurface/GlassSurface';
 import './PillNav.css';
 
 const PillNav = ({
@@ -238,6 +239,20 @@ const PillNav = ({
                   onMouseEnter={() => handleEnter(i)}
                   onMouseLeave={() => handleLeave(i)}
                 >
+                  {item.glass ? (
+                    <GlassSurface
+                      className="pill-glass"
+                      width="100%"
+                      height="100%"
+                      borderRadius={999}
+                      backgroundOpacity={0.06}
+                      saturation={1.45}
+                      distortionScale={-120}
+                      displace={1}
+                    >
+                      <span />
+                    </GlassSurface>
+                  ) : null}
                   <span
                     className="hover-circle"
                     aria-hidden="true"
