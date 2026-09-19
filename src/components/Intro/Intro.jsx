@@ -112,6 +112,32 @@ const streamAsset = async (url, onBytes) => {
   }
 };
 
+/* 真正的“后面全部加载完毕”：等站内图片解码完成、视频缓冲到可播放 */
+const waitForMedia = async (timeoutMs = 6000) => {
+  const deadline = performance.now() + timeoutMs;
+  const images = [...document.querySelectorAll("img[src]")];
+  /* 先让视频按 auto 预载，字节早已在缓存里，这一步只是把它推进到可播放 */
+  document.querySelectorAll("video").forEach((v) => {
+    if (v.readyState < 2) {
+      v.preload = "auto";
+      try {
+        v.load();
+      } catch {
+        /* noop */
+      }
+    }
+  });
+  /* eslint-disable no-await-in-loop */
+  for (;;) {
+    const pendingImages = images.filter((el) => !el.complete || el.naturalWidth === 0).length;
+    const pendingVideos = [...document.querySelectorAll("video")].filter((v) => v.readyState < 2).length;
+    if (!pendingImages && !pendingVideos) return { pendingImages, pendingVideos };
+    if (performance.now() >= deadline) return { pendingImages, pendingVideos };
+    await new Promise((resolve) => setTimeout(resolve, 150));
+  }
+  /* eslint-enable no-await-in-loop */
+};
+
 export default function Intro({ onDone }) {
   const [progress, setProgress] = useState(0);
   const [phase, setPhase] = useState("loading");
@@ -208,6 +234,8 @@ export default function Intro({ onDone }) {
       } catch {
         /* noop */
       }
+      /* 图片 + 视频缓冲全部就绪后才允许点击进入 */
+      await waitForMedia(6000);
       await new Promise((resolve) => requestAnimationFrame(resolve));
       await new Promise((resolve) => requestAnimationFrame(resolve));
 
@@ -336,6 +364,7 @@ export default function Intro({ onDone }) {
               type="button"
               className={`intro__btn ${phase === "ready" ? "is-on" : ""}`}
               onClick={handleStart}
+              disabled={phase !== "ready"}
               aria-label="精彩继续，进入网站"
             >
               精彩继续
