@@ -242,7 +242,7 @@ export default function Hero() {
             particleDistances={[80, 10]}
             particleR={90}
             timeVariance={280}
-            initialActiveIndex={0}
+            initialActiveIndex={-1}
           />
         </div>
       </div>

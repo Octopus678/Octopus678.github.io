@@ -110,19 +110,22 @@ export default function Closing() {
         <span className="overline" style={{ justifyContent: "center" }}>
           04 / Contact — 联系我
         </span>
-        <h2 className="closing-title reveal">
-          有片子，<em>随时聊</em>
-        </h2>
+        {/* 标题区毛玻璃底（与顶部导航同一套玻璃质感） */}
+        <div className="closing-glass">
+          <h2 className="closing-title reveal">
+            有片子，<em>随时聊</em>
+          </h2>
 
-        <div className="closing-warp reveal">
-          <WarpText
-            text="沟通让疑难有解，尊重让见解有光，成片让精致可见"
-            color="#f8f5ff"
-            fontSize="clamp(2.2rem, 4vw, 4.2rem)"
-            fontWeight={600}
-            letterSpacing="0.02em"
-            lineHeight={1.25}
-          />
+          <div className="closing-warp reveal">
+            <WarpText
+              text="沟通让疑难有解，尊重让见解有光，成片让精致可见"
+              color="#f8f5ff"
+              fontSize="clamp(2.2rem, 4vw, 4.2rem)"
+              fontWeight={600}
+              letterSpacing="0.02em"
+              lineHeight={1.25}
+            />
+          </div>
         </div>
 
         {/* 关键词落体：与标题同栏、位于标题层下方，仅作视觉，不可点击 */}
