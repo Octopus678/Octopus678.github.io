@@ -3,6 +3,7 @@ import MoltenMetal from "./MoltenMetal/MoltenMetal";
 import LightRays from "./LightRays/LightRays";
 import FallingText from "./FallingText/FallingText";
 import PillButton from "./PillNav/PillButton";
+import WarpText from "./WarpText/WarpText";
 
 // 尾页落体关键词（React Bits FallingText）：每个词组出现两次，顺序打乱后随机掉落
 const FALLING_WORDS_BASE = [
@@ -36,6 +37,9 @@ const shuffleWords = (list) => {
 };
 
 const FALLING_WORDS = shuffleWords([...FALLING_WORDS_BASE, ...FALLING_WORDS_BASE]).join(" ");
+
+/* 固定引用，避免每次渲染都把词重建、打乱已经落定的位置 */
+const FALLING_HIGHLIGHTS = ["剪辑", "审美", "成片"];
 
 export default function Closing() {
   const sectionRef = useRef(null);
@@ -110,17 +114,29 @@ export default function Closing() {
           有片子，<em>随时聊</em>
         </h2>
 
+        <div className="closing-warp reveal">
+          <WarpText
+            text="沟通让疑难有解，尊重让见解有光，成片让精致可见"
+            color="#f8f5ff"
+            fontSize="clamp(1rem, 1.9vw, 1.75rem)"
+            fontWeight={600}
+            letterSpacing="0.02em"
+            lineHeight={1.25}
+          />
+        </div>
+
         {/* 关键词落体：与标题同栏、位于标题层下方，仅作视觉，不可点击 */}
         <div className="closing-falling">
           <FallingText
             text={FALLING_WORDS}
-            highlightWords={["剪辑", "审美", "成片"]}
+            highlightWords={FALLING_HIGHLIGHTS}
             highlightClass="ft-accent"
             trigger="scroll"
             gravity={0.9}
             fontSize="clamp(2.2rem, 4vw, 4.2rem)"
             lineHeight={1.2}
             interactive={false}
+            settleAfter={6500}
           />
         </div>
 

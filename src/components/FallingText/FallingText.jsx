@@ -14,16 +14,24 @@ const FallingText = ({
   mouseConstraintStiffness = 0.2,
   fontSize = '1rem',
   lineHeight = 1.4,
-  interactive = true
+  interactive = true,
+  settleAfter = 0
 }) => {
   const containerRef = useRef(null);
   const textRef = useRef(null);
   const canvasContainerRef = useRef(null);
+  const markupSignatureRef = useRef("");
 
   const [effectStarted, setEffectStarted] = useState(false);
 
   useEffect(() => {
     if (!textRef.current) return;
+    // 只有当文本/高亮配置真的变化时才重建 HTML，
+    // 否则父组件任意一次重渲染都会把已落定的词块打回初始排版。
+    const signature = `${text}|${highlightWords.join(",")}|${highlightClass}`;
+    if (markupSignatureRef.current === signature) return;
+    markupSignatureRef.current = signature;
+
     const words = text.split(' ');
     const newHTML = words
       .map(word => {
@@ -69,6 +77,8 @@ const FallingText = ({
 
     const engine = Engine.create();
     engine.world.gravity.y = gravity;
+    /* 静止后让刚体休眠，减少无意义的持续抖动 */
+    engine.enableSleeping = true;
 
     const render = Render.create({
       element: canvasContainerRef.current,
@@ -146,6 +156,7 @@ const FallingText = ({
     Render.run(render);
 
     let animationFrameId;
+    let frozen = false;
     const updateLoop = () => {
       wordBodies.forEach(({ body, elem }) => {
         const { x, y } = body.position;
@@ -153,12 +164,25 @@ const FallingText = ({
         elem.style.top = `${y}px`;
         elem.style.transform = `translate(-50%, -50%) rotate(${body.angle}rad)`;
       });
+      if (frozen) return;
       Matter.Engine.update(engine);
       animationFrameId = requestAnimationFrame(updateLoop);
     };
     updateLoop();
 
+    /* 落定后彻底冻结：之后无论怎么滚动、怎么重渲染，词块都保持第一次掉落的样子 */
+    let settleTimer = null;
+    if (settleAfter > 0) {
+      settleTimer = window.setTimeout(() => {
+        frozen = true;
+        if (animationFrameId) cancelAnimationFrame(animationFrameId);
+        animationFrameId = null;
+        Runner.stop(runner);
+      }, settleAfter);
+    }
+
     return () => {
+      if (settleTimer) clearTimeout(settleTimer);
       cancelAnimationFrame(animationFrameId);
       Render.stop(render);
       Runner.stop(runner);
@@ -169,7 +193,7 @@ const FallingText = ({
       World.clear(engine.world);
       Engine.clear(engine);
     };
-  }, [effectStarted, gravity, wireframes, backgroundColor, mouseConstraintStiffness, interactive]);
+  }, [effectStarted, gravity, wireframes, backgroundColor, mouseConstraintStiffness, interactive, settleAfter]);
 
   const handleTrigger = () => {
     if (!effectStarted && (trigger === 'click' || trigger === 'hover')) {

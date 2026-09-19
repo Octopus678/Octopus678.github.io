@@ -1,4 +1,5 @@
 import ProfileCard from "./ProfileCard/ProfileCard";
+import MagicCard from "./MagicCard/MagicCard";
 
 const PORTRAIT = "/photos/p1.jpg";
 
@@ -48,6 +49,10 @@ export default function About() {
                   }
                 />
               </div>
+            </div>
+
+            <div className="intro-magic">
+              <MagicCard />
             </div>
           </div>
         </div>
