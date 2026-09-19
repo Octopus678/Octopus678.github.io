@@ -1266,7 +1266,7 @@
 
 .closing-warp .warp-text {
   min-height: 0;
-  height: clamp(74px, 8vh, 104px);
+  height: clamp(104px, 11vh, 152px);
 }
 
 /* 尾页光束：React Bits LightRays，滑入本栏淡入、划出淡出 */

@@ -118,7 +118,7 @@ export default function Closing() {
           <WarpText
             text="沟通让疑难有解，尊重让见解有光，成片让精致可见"
             color="#f8f5ff"
-            fontSize="clamp(1rem, 1.9vw, 1.75rem)"
+            fontSize="clamp(2.2rem, 4vw, 4.2rem)"
             fontWeight={600}
             letterSpacing="0.02em"
             lineHeight={1.25}
